@@ -13,8 +13,14 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@aws-amplify/api": "^6.0.9",
     "@expo/vector-icons": "^13.0.0",
+    "@react-native-async-storage/async-storage": "1.18.2",
+    "@react-native-community/netinfo": "9.3.10",
     "@react-navigation/native": "^6.0.2",
+    "amazon-cognito-identity-js": "^6.3.8",
+    "aws-amplify": "^5.3.13",
+    "aws-amplify-react-native": "^7.0.8",
     "expo": "~49.0.15",
     "expo-font": "~11.4.0",
     "expo-linking": "~5.0.2",
@@ -23,6 +29,7 @@
     "expo-status-bar": "~1.6.0",
     "expo-system-ui": "~2.4.0",
     "expo-web-browser": "~12.3.2",
+    "graphql": "^15.5.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.72.6",

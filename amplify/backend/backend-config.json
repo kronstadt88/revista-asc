@@ -1,0 +1,69 @@
+{
+  "api": {
+    "ascapi": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "revistaasc80762932"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    }
+  },
+  "auth": {
+    "revistaasc": {
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyCharacters": [],
+          "passwordPolicyMinLength": 8
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito",
+      "serviceType": "managed"
+    }
+  },
+  "function": {
+    "revistaasc80762932": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_revistaasc80762932_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "revistaasc80762932"
+        }
+      ]
+    },
+    "AMPLIFY_function_revistaasc80762932_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "revistaasc80762932"
+        }
+      ]
+    }
+  }
+}
