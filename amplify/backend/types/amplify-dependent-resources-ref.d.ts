@@ -1,6 +1,6 @@
 export type AmplifyDependentResourcesAttributes = {
   "api": {
-    "ascapi": {
+    "ascpi": {
       "ApiId": "string",
       "ApiName": "string",
       "RootUrl": "string"
@@ -15,10 +15,13 @@ export type AmplifyDependentResourcesAttributes = {
       "UserPoolArn": "string",
       "UserPoolId": "string",
       "UserPoolName": "string"
+    },
+    "userPoolGroups": {
+      "ascusersGroupRole": "string"
     }
   },
   "function": {
-    "revistaasc80762932": {
+    "getArticle": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",

@@ -47,12 +47,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "revistaasc80762932",
+            "getArticle",
             {
               "Fn::Join": [
                 "",
                 [
-                  "revistaasc80762932",
+                  "getArticle",
                   "-",
                   {
                     "Ref": "env"
@@ -89,12 +89,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "revistaascLambdaRole60ce237f",
+            "revistaascLambdaRole1e1f7d34",
             {
               "Fn::Join": [
                 "",
                 [
-                  "revistaascLambdaRole60ce237f",
+                  "revistaascLambdaRole1e1f7d34",
                   "-",
                   {
                     "Ref": "env"

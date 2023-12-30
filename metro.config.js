@@ -9,7 +9,7 @@ module.exports = (async () => {
     resolver: {
       
       blacklistRE: blacklist([/amplify\/#current-cloud-backend\/.*/]),
-      sourceExts: [...sourceExts, "cjs"]
+      sourceExts: [...sourceExts, "cjs", "mjs"]
     }
   };
 })();

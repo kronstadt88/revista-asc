@@ -1,10 +1,10 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "revistaasc_identitypool_cffa04ba",
+    "identityPoolName": "revistaasc_identitypool_92b3b8f6",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "revistcffa04ba",
-    "userPoolName": "revistaasc_userpool_cffa04ba",
+    "resourceNameTruncated": "revist92b3b8f6",
+    "userPoolName": "revistaasc_userpool_92b3b8f6",
     "autoVerifiedAttributes": [
       "email"
     ],
@@ -31,12 +31,30 @@
     "userpoolClientReadAttributes": [
       "email"
     ],
-    "userpoolClientLambdaRole": "revistcffa04ba_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "revist92b3b8f6_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
     "authSelections": "identityPoolAndUserPool",
     "resourceName": "revistaasc",
-    "sharedId": "cffa04ba",
+    "sharedId": "92b3b8f6",
     "serviceName": "Cognito",
-    "useDefault": "manual"
+    "useDefault": "manual",
+    "authRoleArn": {
+      "Fn::GetAtt": [
+        "AuthRole",
+        "Arn"
+      ]
+    },
+    "unauthRoleArn": {
+      "Fn::GetAtt": [
+        "UnauthRole",
+        "Arn"
+      ]
+    },
+    "breakCircularDependency": true,
+    "useEnabledMfas": true,
+    "dependsOn": [],
+    "userPoolGroupList": [
+      "ascusers"
+    ]
   }
 }

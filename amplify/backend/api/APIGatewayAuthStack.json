@@ -11,7 +11,7 @@
     "env": {
       "Type": "String"
     },
-    "ascapi": {
+    "ascpi": {
       "Type": "String"
     }
   },
@@ -52,7 +52,7 @@
                       },
                       ":",
                       {
-                        "Ref": "ascapi"
+                        "Ref": "ascpi"
                       },
                       "/",
                       {
@@ -82,7 +82,7 @@
                       },
                       ":",
                       {
-                        "Ref": "ascapi"
+                        "Ref": "ascpi"
                       },
                       "/",
                       {

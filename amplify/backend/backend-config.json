@@ -1,6 +1,6 @@
 {
   "api": {
-    "ascapi": {
+    "ascpi": {
       "dependsOn": [
         {
           "attributes": [
@@ -8,7 +8,7 @@
             "Arn"
           ],
           "category": "function",
-          "resourceName": "revistaasc80762932"
+          "resourceName": "getArticle"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -39,29 +39,45 @@
       "providerPlugin": "awscloudformation",
       "service": "Cognito",
       "serviceType": "managed"
+    },
+    "userPoolGroups": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId",
+            "AppClientIDWeb",
+            "AppClientID",
+            "IdentityPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "revistaasc"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito-UserPool-Groups"
     }
   },
   "function": {
-    "revistaasc80762932": {
+    "getArticle": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }
   },
   "parameters": {
-    "AMPLIFY_function_revistaasc80762932_deploymentBucketName": {
+    "AMPLIFY_function_getArticle_deploymentBucketName": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "revistaasc80762932"
+          "resourceName": "getArticle"
         }
       ]
     },
-    "AMPLIFY_function_revistaasc80762932_s3Key": {
+    "AMPLIFY_function_getArticle_s3Key": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "revistaasc80762932"
+          "resourceName": "getArticle"
         }
       ]
     }

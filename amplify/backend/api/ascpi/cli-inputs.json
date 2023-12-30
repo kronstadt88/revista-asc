@@ -3,7 +3,7 @@
   "paths": {
     "/articles": {
       "name": "/articles",
-      "lambdaFunction": "revistaasc80762932",
+      "lambdaFunction": "getArticle",
       "permissions": {
         "setting": "private",
         "auth": [
@@ -12,6 +12,13 @@
           "update",
           "delete"
         ]
+      }
+    },
+    "/sign-up": {
+      "name": "/sign-up",
+      "lambdaFunction": "getArticle",
+      "permissions": {
+        "setting": "open"
       }
     }
   }
