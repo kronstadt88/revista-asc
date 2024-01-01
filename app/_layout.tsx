@@ -5,10 +5,6 @@ import { SplashScreen, Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 
-import { Amplify, Auth, API } from "aws-amplify";
-import config from '../src/aws-exports';
-Amplify.configure(config);
-
 
 
 export {
@@ -30,30 +26,10 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  async function getTodo() {
-    
-    const apiName = 'ascpi';
-    const path = '/sign-up';
-    const myInit = {
-      headers: {}, // OPTIONAL
-      response: true, // OPTIONAL (return the entire Axios response object instead of only response.data)
-      queryStringParameters: {
-        name: 'param' // OPTIONAL
-      }
-    };
 
-    API.get(apiName, path, myInit)
-      .then((response) => {
-        // Add your code here
-      })
-      .catch((error) => {
-        console.log(error.response);
-      });
-      }
   
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
-    getTodo()
     
 
     if (error) throw error;
