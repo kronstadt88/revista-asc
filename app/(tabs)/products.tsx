@@ -1,16 +1,13 @@
-import { StyleSheet } from 'react-native';
-
-import EditScreenInfo from '../../components/EditScreenInfo';
-import { Text, View } from '../../components/Themed';
-
+import { StyleSheet, Text, View } from "react-native";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import AnimatedAcordion from "../../components/accordion";
 
 
-export default function TabOneScreen() {
+export default function Products() {
+  
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Products</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      
+      <AnimatedAcordion/>
     </View>
   );
 }
@@ -18,16 +15,16 @@ export default function TabOneScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "white",
+    alignContent: "center",
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  row: {
+    
+    padding: 20,
+    fontSize: 15,
+    marginTop: 5,
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
+  shopIcon:{
+    
+  }
 });

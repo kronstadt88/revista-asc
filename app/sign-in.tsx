@@ -118,7 +118,8 @@ const LoginScreen = () => {
             >
               <Text style={styles.buttonTextStyle} onPress={()=>signInToAws(userEmail, userPassword)}>LOGIN</Text>
             </TouchableOpacity>
-            <Link href="/sign-up" asChild>
+            <Link href="/" asChild>
+              
               <Text
                 style={styles.registerTextStyle}
                 

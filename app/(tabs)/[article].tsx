@@ -1,7 +1,37 @@
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Pressable } from "react-native";
+import { useLocalSearchParams } from 'expo-router';
+import { Link, Tabs } from 'expo-router';
+import { FontAwesome } from "@expo/vector-icons";
 
 export default function Article() {
+  const { slug } = useLocalSearchParams();
+  console.log(slug)
   return (
+    <>
+      <Tabs>
+      <Tabs.Screen
+        name="products"
+        options={{
+          title: 'Products',
+          
+          headerRight: () => (
+            <Link href="/" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="info-circle"
+                    size={25}
+                    
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
+        }}
+      />
+      
+    </Tabs>
     <View style={styles.container}>
       <View>
         
@@ -22,6 +52,8 @@ export default function Article() {
         </Text>
       </View>
     </View>
+    </>
+    
   );
 }
 
