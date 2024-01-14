@@ -42,7 +42,7 @@ export async function signUp({
     console.log('error signing up:', error);
   }
 }
-signUp({username:"Tati", password:"Thisisapassword123!!", email:"alberto.martin1535@gmail.com", phone_number: "+123121424"})
+//signUp({username:"Tati", password:"Thisisapassword123!!", email:"alberto.martin1535@gmail.com", phone_number: "+123121424"})
 // This file is web-only and used to configure the root HTML for every
 // web page during static rendering.
 // The contents of this function only run in Node.js environments and
