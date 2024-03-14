@@ -5,7 +5,10 @@ import {
   View,
   Text,
   TouchableOpacity,
+  
+  Pressable
 } from 'react-native';
+import { Link } from "expo-router";
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -13,7 +16,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { Link } from 'expo-router';
+import { FontAwesome } from "@expo/vector-icons";
 
 const data = [
   {
@@ -58,6 +61,7 @@ const AnimatedAcordion = () => (
         <AccordionItem title={item.title} description={item.description} />
       )}
     />
+    
   </View>
 );
 
@@ -73,7 +77,7 @@ const AccordionItem = ({title, description}) => {
     return {
       transform: [
         {
-          rotate: `${interpolate(shareValue.value, [0, 1], [0, 90])}deg`,
+          rotate: `${interpolate(shareValue.value, [0, 1], [0, 180])}deg`,
         },
       ],
     };
@@ -101,7 +105,8 @@ const AccordionItem = ({title, description}) => {
         onPress={toggleButton}>
         <Text style={styles.title}>{title}</Text>
         <Animated.View style={iconStyle}>
-        
+        <FontAwesome name="chevron-down" size={24} color="black" />
+    
         </Animated.View>
       </TouchableOpacity>
 
@@ -114,13 +119,15 @@ const AccordionItem = ({title, description}) => {
             }}>
                  {description.map((item, index) => {
                     return (
-                        
                         <View style={styles.articlesContainer} key={index}>
-                            <Link
-                                href="/(tabs)/articles">   
-                                
-                                <Text >{item}</Text> 
-                            </Link>
+                          <Link href={`/article/${item.toLowerCase().replace("/", "")}`} >
+                            
+                              <Text>{item}1234 </Text>
+                            
+                          </Link>
+                            
+                              
+                            
                             
                         </View>
                         );

@@ -9,7 +9,7 @@ import {
   View,
   Text,
   ScrollView,
-  Image,
+  
   Keyboard,
   TouchableOpacity,
   KeyboardAvoidingView,
@@ -33,7 +33,7 @@ type SignInParameters = {
 
 export async function signIn({ username, password }: SignInParameters) {
   try {
-    const user = await Auth.signIn(username, password);
+    await Auth.signIn(username, password);
   } catch (error) {
     console.log('error signing in', error);
   }
@@ -54,7 +54,15 @@ const LoginScreen = () => {
   const signInToAws = async (username, password)=> {
     try {
       const user = await Auth.signIn(username, password);
-      signIn(user);
+      
+      
+      Auth.currentSession().then(res=>{
+        let accessToken = res.getAccessToken()
+        let jwt = accessToken.getJwtToken()
+            
+        signIn(jwt);
+      })
+
     } catch (error) {
       console.log('error signing in', error);
     }
@@ -114,9 +122,9 @@ const LoginScreen = () => {
             <TouchableOpacity
               style={styles.buttonStyle}
               activeOpacity={0.5}
-              
+              onPress={()=>signInToAws(userEmail, userPassword)}
             >
-              <Text style={styles.buttonTextStyle} onPress={()=>signInToAws(userEmail, userPassword)}>LOGIN</Text>
+              <Text style={styles.buttonTextStyle} >LOGIN</Text>
             </TouchableOpacity>
             <Link href="/" asChild>
               

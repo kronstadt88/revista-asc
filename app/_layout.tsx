@@ -24,13 +24,9 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
   });
-
-
   
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
-    
-
     if (error) throw error;
   }, [error]);
 
@@ -58,10 +54,10 @@ function RootLayoutNav() {
         
         screenOptions={{
           headerStyle: {
-            backgroundColor: '#f4511e',
+            backgroundColor: '#fff',
           },
           title: "Trading en la bolsa",
-          headerTintColor: '#fff',
+          headerTintColor: '#000000',
           headerTitleStyle: {
             fontWeight: 'bold',
           },
