@@ -5,14 +5,14 @@
 import React, {useState, createRef} from 'react';
 import { StyleSheet, TextInput, View, Text, KeyboardAvoidingView, TouchableOpacity, ScrollView } from 'react-native';
 
-import { Amplify, Auth } from 'aws-amplify';
+import { Amplify } from 'aws-amplify';
 
-import awsconfig from '../src/aws-exports';
+import awsconfig from '../src/amplifyconfiguration.json';
 
 import { useSession } from '../services/ctx';
 
 Amplify.configure(awsconfig);
-Auth.configure(awsconfig);
+//Auth.configure(awsconfig);
 
 type SignUpParameters = {
   username: string;
@@ -35,7 +35,7 @@ const CreateUser = () => {
   const { signIn } = useSession();
 
   const signUpToAws = async(username, password, email) =>{
-    try {
+    /*try {
       const { user } = await Auth.signUp({
         username,
         password,
@@ -51,13 +51,13 @@ const CreateUser = () => {
       console.log(user);
     } catch (error) {
       console.log('error signing up:', error);
-    }
+    }*/
   }
 
   async function confirmSignUp(username,code) {
     try {
       
-      await Auth.confirmSignUp(username, code);
+      //await Auth.confirmSignUp(username, code);
     } catch (error) {
       console.log('error confirming sign up', error);
     }

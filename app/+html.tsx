@@ -1,14 +1,12 @@
 import { ScrollViewStyleReset } from 'expo-router/html';
 
 
-import { Amplify, Auth } from 'aws-amplify';
+import { Amplify} from 'aws-amplify';
 import type { WithAuthenticatorProps } from '@aws-amplify/ui-react';
-import { withAuthenticator } from '@aws-amplify/ui-react';
 
-
-import awsconfig from '../src/aws-exports';
+import awsconfig from '../src/amplifyconfiguration.json';
 Amplify.configure(awsconfig);
-Auth.configure(awsconfig);
+//Auth.configure(awsconfig);
 
 type SignUpParameters = {
   username: string;
@@ -24,7 +22,7 @@ export async function signUp({
   phone_number
 }: SignUpParameters) {
   try {
-    const { user } = await Auth.signUp({
+    /*const { user } = await Auth.signUp({
       username,
       password,
       attributes: {
@@ -37,7 +35,7 @@ export async function signUp({
         enabled: true
       }
     });
-    console.log(user);
+    console.log(user);*/
   } catch (error) {
     console.log('error signing up:', error);
   }

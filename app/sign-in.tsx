@@ -18,27 +18,17 @@ import { Link } from "expo-router";
 import { useSession } from '../services/ctx';
 
 
+import { signIn, type SignInInput } from 'aws-amplify/auth';
+import { Amplify } from 'aws-amplify';
 
-import { Amplify, Auth } from 'aws-amplify';
-import awsconfig from '../src/aws-exports';
+import awsconfig from '../src/amplifyconfiguration.json';
+
 Amplify.configure(awsconfig);
-Auth.configure(awsconfig);
-
 
 type SignInParameters = {
   username: string;
   password: string;
 };
-
-
-export async function signIn({ username, password }: SignInParameters) {
-  try {
-    await Auth.signIn(username, password);
-  } catch (error) {
-    console.log('error signing in', error);
-  }
-}
-
 
 
 const LoginScreen = () => {
@@ -49,20 +39,16 @@ const LoginScreen = () => {
 
   const passwordInputRef = createRef();
 
-  const { signIn } = useSession();
+  //const { signIn } = useSession();
 
   const signInToAws = async (username, password)=> {
     try {
-      const user = await Auth.signIn(username, password);
-      Auth.signOut()
-        const idToken = (await Auth.currentSession()).getIdToken().getJwtToken();
-        const accessToken = (await Auth.currentSession()).getAccessToken().getJwtToken();
-        debugger;
-
-        signIn(accessToken);
-      
-
+      const currentConfig = Amplify.getConfig();
+      console.log(currentConfig)
+      const { isSignedIn, nextStep } = await signIn({ username, password, options: { authFlowType: "USER_PASSWORD_AUTH" } });
+      alert(isSignedIn)
     } catch (error) {
+      alert(error)
       console.log('error signing in', error);
     }
   }

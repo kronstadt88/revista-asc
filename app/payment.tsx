@@ -20,10 +20,10 @@ import { useSession } from '../services/ctx';
 
 
 
-import { Amplify, Auth } from 'aws-amplify';
-import awsconfig from '../src/aws-exports';
+import { Amplify} from 'aws-amplify';
+import awsconfig from '../src/amplifyconfiguration.json';
 Amplify.configure(awsconfig);
-Auth.configure(awsconfig);
+
 
 
 type SignInParameters = {
@@ -34,7 +34,7 @@ type SignInParameters = {
 
 export async function signIn({ username, password }: SignInParameters) {
   try {
-    await Auth.signIn(username, password);
+    //await Auth.signIn(username, password);
   } catch (error) {
     console.log('error signing in', error);
   }

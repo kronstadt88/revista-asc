@@ -4,9 +4,10 @@ import { Link, Tabs } from 'expo-router';
 import { FontAwesome } from "@expo/vector-icons";
 import Colors from '../../constants/Colors';
 import { Avatar, Button, Card, Text } from 'react-native-paper';
+import { withAuthenticator } from "@aws-amplify/ui-react-native";
 const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
 
-export default function Article() {
+function Article() {
   const { slug } = useLocalSearchParams();
   const colorScheme = useColorScheme();
   console.log(slug)
@@ -29,6 +30,10 @@ export default function Article() {
      
   );
 }
+
+
+export default withAuthenticator(Article);
+
 
 const styles = StyleSheet.create({
   container: {

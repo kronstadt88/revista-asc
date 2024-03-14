@@ -4,31 +4,50 @@ import { PaperProvider } from 'react-native-paper';
 import { Button } from 'react-native-paper';
 import {
   useAuthenticator,
-  withAuthenticator,
+  Authenticator
 } from '@aws-amplify/ui-react-native';
 
-import { Amplify, Auth } from 'aws-amplify';
-import awsconfig from '../src/aws-exports';
-Amplify.configure(awsconfig);
-Auth.configure(awsconfig);
+import { Amplify} from 'aws-amplify';
+import awsconfig from '../src/amplifyconfiguration.json';
 
+import { signIn, type SignInInput } from 'aws-amplify/auth';
+Amplify.configure(awsconfig);
+
+
+function SignOutButton() {
+  const { signOut } = useAuthenticator();
+  return <Button onPress={signOut}>Sign Out </Button>;
+}
 
 
 function IndexScreen() {
-  const { user, signOut } = useAuthenticator();
 
   return (
+    <Authenticator.Provider>
+      <Authenticator
+        services={{
+          handleSignIn: ({ username, password, options }: SignInInput) =>
+            signIn({
+              username: username,
+              password: password,
+              options: { authFlowType: "USER_PASSWORD_AUTH" } 
+              
+            }),
+        }}>
+
     
-    <PaperProvider>
+      <PaperProvider>
       <View style={styles.container}>
       
       <Button style={styles.button}  mode="contained" onPress={() => router.push('/sign-in')}>
         Sign In
       </Button>
 
-      <Button style={styles.button} mode="contained" onPress={() => Auth.signOut()}>
+      <Button style={styles.button} mode="contained" onPress={() => router.push('/sign-in')}>
         Sign Up
       </Button>
+
+      <SignOutButton/>
 
       <Button style={styles.button}  mode="contained" onPress={() => router.push('/products')}>
         Open Products
@@ -37,15 +56,18 @@ function IndexScreen() {
       <Button style={styles.button}  mode="contained" onPress={() => router.push('/article/eurusd')}>
         Open Articles s
       </Button>
-      <Text>{`Welcome, ${user}!`}</Text>
+      
       
     </View>
     </PaperProvider>
+    </Authenticator>
+    </Authenticator.Provider>
+    
     
   );
 }
 
-export default withAuthenticator(IndexScreen)
+export default IndexScreen
 
 const styles = StyleSheet.create({
   container: {

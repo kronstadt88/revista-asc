@@ -16,7 +16,7 @@
       "function": {
         "getArticle": {
           "deploymentBucketName": "amplify-revistaasc-dev-141602-deployment",
-          "s3Key": "amplify-builds/getArticle-2b57576a464e52684778-build.zip"
+          "s3Key": "amplify-builds/getArticle-59484944705870414772-build.zip"
         }
       },
       "api": {

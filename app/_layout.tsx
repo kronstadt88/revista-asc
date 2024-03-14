@@ -28,6 +28,7 @@ export default function RootLayout() {
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
+    console.log("123")
   }, [error]);
 
   useEffect(() => {
@@ -56,7 +57,7 @@ function RootLayoutNav() {
           headerStyle: {
             backgroundColor: '#fff',
           },
-          title: "Trading en la bolsaa",
+          title: "Trading en la bolsa",
           headerTintColor: '#000000',
           headerTitleStyle: {
             fontWeight: 'bold',

@@ -5,25 +5,34 @@ import { useEffect } from "react";
 import { useSession } from '../services/ctx';
 import { getArticles} from '../services/index'
 import { PaperProvider } from 'react-native-paper';
+import {
+  Authenticator,
+  useAuthenticator,
+  withAuthenticator,
+} from '@aws-amplify/ui-react-native';
 
 
-export default function Products() {
+function Products() {
   const { session, isLoading } = useSession();
 
+  /*
+  
   useEffect(()=>{
     getArticles()
   }, [])
+  */
 
 
   return (
     <PaperProvider>
     <View style={styles.container}>
-      
-      <AnimatedAcordion/>
+      <Text>123</Text>
     </View>
     </PaperProvider>
   );
 }
+
+export default withAuthenticator(Products);
 
 const styles = StyleSheet.create({
   container: {
