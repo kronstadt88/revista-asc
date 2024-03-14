@@ -16,7 +16,8 @@
     }
   },
   "auth": {
-    "revistaasc": {
+    "revistaasc2bed4ced": {
+      "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
         "mfaConfiguration": "OFF",
@@ -37,8 +38,7 @@
         ]
       },
       "providerPlugin": "awscloudformation",
-      "service": "Cognito",
-      "serviceType": "managed"
+      "service": "Cognito"
     },
     "userPoolGroups": {
       "dependsOn": [
@@ -50,7 +50,7 @@
             "IdentityPoolId"
           ],
           "category": "auth",
-          "resourceName": "revistaasc"
+          "resourceName": "revistaasc2bed4ced"
         }
       ],
       "providerPlugin": "awscloudformation",
