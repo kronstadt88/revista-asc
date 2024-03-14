@@ -2,11 +2,23 @@ import { StyleSheet, Pressable , Text, View, TouchableOpacity} from 'react-nativ
 import { Link, router } from "expo-router";
 import { PaperProvider } from 'react-native-paper';
 import { Button } from 'react-native-paper';
+import {
+  useAuthenticator,
+  withAuthenticator,
+} from '@aws-amplify/ui-react-native';
 
-export default function IndexScreen() {
-  
+import { Amplify, Auth } from 'aws-amplify';
+import awsconfig from '../src/aws-exports';
+Amplify.configure(awsconfig);
+Auth.configure(awsconfig);
+
+
+
+function IndexScreen() {
+  const { user, signOut } = useAuthenticator();
 
   return (
+    
     <PaperProvider>
       <View style={styles.container}>
       
@@ -14,7 +26,7 @@ export default function IndexScreen() {
         Sign In
       </Button>
 
-      <Button style={styles.button} mode="contained" onPress={() => router.push('/sign-up')}>
+      <Button style={styles.button} mode="contained" onPress={() => Auth.signOut()}>
         Sign Up
       </Button>
 
@@ -23,8 +35,9 @@ export default function IndexScreen() {
       </Button>
 
       <Button style={styles.button}  mode="contained" onPress={() => router.push('/article/eurusd')}>
-        Open Articles
+        Open Articles s
       </Button>
+      <Text>{`Welcome, ${user}!`}</Text>
       
     </View>
     </PaperProvider>
@@ -32,12 +45,12 @@ export default function IndexScreen() {
   );
 }
 
+export default withAuthenticator(IndexScreen)
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor:"white",
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1
   },
   button: {
     margin: 30,

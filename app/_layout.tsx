@@ -56,7 +56,7 @@ function RootLayoutNav() {
           headerStyle: {
             backgroundColor: '#fff',
           },
-          title: "Trading en la bolsa",
+          title: "Trading en la bolsaa",
           headerTintColor: '#000000',
           headerTitleStyle: {
             fontWeight: 'bold',

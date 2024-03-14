@@ -54,14 +54,13 @@ const LoginScreen = () => {
   const signInToAws = async (username, password)=> {
     try {
       const user = await Auth.signIn(username, password);
+      Auth.signOut()
+        const idToken = (await Auth.currentSession()).getIdToken().getJwtToken();
+        const accessToken = (await Auth.currentSession()).getAccessToken().getJwtToken();
+        debugger;
+
+        signIn(accessToken);
       
-      
-      Auth.currentSession().then(res=>{
-        let accessToken = res.getAccessToken()
-        let jwt = accessToken.getJwtToken()
-            
-        signIn(jwt);
-      })
 
     } catch (error) {
       console.log('error signing in', error);
