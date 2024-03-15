@@ -10,6 +10,9 @@ import { Amplify } from 'aws-amplify';
 import awsconfig from '../src/amplifyconfiguration.json';
 
 import { useSession } from '../services/ctx';
+import { signUp } from 'aws-amplify/auth';
+
+import { confirmSignUp, type ConfirmSignUpInput } from 'aws-amplify/auth';
 
 Amplify.configure(awsconfig);
 //Auth.configure(awsconfig);
@@ -32,9 +35,24 @@ const CreateUser = () => {
   
   const passwordInputRef = createRef();
 
-  const { signIn } = useSession();
+  //const { signIn } = useSession();
 
   const signUpToAws = async(username, password, email) =>{
+    try {
+      const { isSignUpComplete, userId, nextStep } = await signUp({
+        username,
+        password,
+        options: {
+          userAttributes: {
+            email
+          
+        }
+      }});
+  
+      alert(userId);
+    } catch (error) {
+      alert('error signing up:'+ error);
+    }
     /*try {
       const { user } = await Auth.signUp({
         username,
@@ -54,12 +72,17 @@ const CreateUser = () => {
     }*/
   }
 
-  async function confirmSignUp(username,code) {
+  async function handleSignUpConfirmation({
+    username,
+    confirmationCode
+  }: ConfirmSignUpInput) {
     try {
-      
-      //await Auth.confirmSignUp(username, code);
+      const { isSignUpComplete, nextStep } = await confirmSignUp({
+        username,
+        confirmationCode
+      });
     } catch (error) {
-      console.log('error confirming sign up', error);
+      alert('error confirming sign up' + error);
     }
   }
 
@@ -163,7 +186,7 @@ const CreateUser = () => {
             style={styles.buttonStyle}
             activeOpacity={0.5}
             >
-              <Text style={styles.buttonTextStyle} onPress={()=>confirmSignUp( userName, userCode)}>Confirm User Creation</Text>
+              <Text style={styles.buttonTextStyle} onPress={()=>handleSignUpConfirmation({ username:userName, confirmationCode: userCode })}>Confirm User Creation</Text>
             </TouchableOpacity>
         </KeyboardAvoidingView>
       </ScrollView>

@@ -4,7 +4,8 @@ import { PaperProvider } from 'react-native-paper';
 import { Button } from 'react-native-paper';
 import {
   useAuthenticator,
-  Authenticator
+  Authenticator,
+  withAuthenticator
 } from '@aws-amplify/ui-react-native';
 
 import { Amplify} from 'aws-amplify';
@@ -23,18 +24,6 @@ function SignOutButton() {
 function IndexScreen() {
 
   return (
-    <Authenticator.Provider>
-      <Authenticator
-        services={{
-          handleSignIn: ({ username, password, options }: SignInInput) =>
-            signIn({
-              username: username,
-              password: password,
-              options: { authFlowType: "USER_PASSWORD_AUTH" } 
-              
-            }),
-        }}>
-
     
       <PaperProvider>
       <View style={styles.container}>
@@ -43,7 +32,7 @@ function IndexScreen() {
         Sign In
       </Button>
 
-      <Button style={styles.button} mode="contained" onPress={() => router.push('/sign-in')}>
+      <Button style={styles.button} mode="contained" onPress={() => router.push('/sign-up')}>
         Sign Up
       </Button>
 
@@ -54,20 +43,18 @@ function IndexScreen() {
       </Button>
 
       <Button style={styles.button}  mode="contained" onPress={() => router.push('/article/eurusd')}>
-        Open Articles s
+        Open Articles
       </Button>
       
       
     </View>
     </PaperProvider>
-    </Authenticator>
-    </Authenticator.Provider>
     
     
   );
 }
 
-export default IndexScreen
+export default withAuthenticator(IndexScreen);
 
 const styles = StyleSheet.create({
   container: {

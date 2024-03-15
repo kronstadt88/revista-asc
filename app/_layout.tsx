@@ -6,10 +6,11 @@ import { useEffect } from 'react';
 import { useColorScheme} from 'react-native';
 import { SessionProvider } from '../services/ctx';
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
+import { confirmSignUp, ConfirmSignUpInput, signIn, type SignInInput } from 'aws-amplify/auth';
+import { handleConfirmSignUp, type SignUpInput } from 'aws-amplify/auth';
+import { Authenticator } from '@aws-amplify/ui-react-native';
+
+export { ErrorBoundary } from 'expo-router';
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -28,7 +29,6 @@ export default function RootLayout() {
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
-    console.log("123")
   }, [error]);
 
   useEffect(() => {
@@ -44,12 +44,64 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
+async function handleSignUpConfirmation({
+  username,
+  confirmationCode
+}: ConfirmSignUpInput) {
+  return await confirmSignUp({
+    username,
+    confirmationCode
+  });
+  try {
+    return await confirmSignUp({
+      username,
+      confirmationCode
+    });
+  } catch (error) {
+    alert('error confirming sign up' + error);
+  }
+}
+
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <SessionProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <Authenticator.Provider>
+      <Authenticator
+      components={{
+        SignUp: ({ fields, ...props }) => (
+          <Authenticator.SignUp
+            {...props}
+            fields={[
+              ...fields,
+              {
+                name: 'preferred_username',
+                label: 'Preferred Username',
+                type: 'default',
+                placeholder: 'Enter your preferred username',
+                //required: true
+              },
+            ]}
+          />
+        ),
+      }}
+      
+        services={{
+          handleSignIn: ({ username, password, options }: SignInInput) =>
+            signIn({
+              username: username,
+              password: password,
+              options: { authFlowType: "USER_PASSWORD_AUTH" } 
+              
+            }),
+            
+          handleConfirmSignUp: async ({ username, confirmationCode }: ConfirmSignUpInput) =>
+            handleSignUpConfirmation({username, confirmationCode})
+        
+        }}>
+
+    
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack
         initialRouteName='/'
         
@@ -57,7 +109,7 @@ function RootLayoutNav() {
           headerStyle: {
             backgroundColor: '#fff',
           },
-          title: "Trading en la bolsa",
+          title: "Trading en la bolsaa",
           headerTintColor: '#000000',
           headerTitleStyle: {
             fontWeight: 'bold',
@@ -66,7 +118,9 @@ function RootLayoutNav() {
       >
       </Stack>
       </ThemeProvider>
-    </SessionProvider>
+    </Authenticator>
+    </Authenticator.Provider>
+      
     
   );
 }
