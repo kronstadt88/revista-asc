@@ -122,7 +122,7 @@ const AccordionItem = ({title, description}) => {
                         <View style={styles.articlesContainer} key={index}>
                           <Link href={`/article/${item.toLowerCase().replace("/", "")}`} >
                             
-                              <Text>{item}1234 </Text>
+                              <Text>{item}</Text>
                             
                           </Link>
                             

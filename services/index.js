@@ -1,24 +1,47 @@
-import sigV4Client from '../utils/sigV4Client'
-import { get } from 'aws-amplify/api';
+
+import { get, post } from 'aws-amplify/api';
 
 
-import { fetchAuthSession } from 'aws-amplify/auth'
-
+import { fetchAuthSession, getCurrentUser} from 'aws-amplify/auth'
 
 const server = "https://sgsldh5134.execute-api.eu-west-1.amazonaws.com";
 
-export const getArticle = async() =>{
+export const getArticle = async(id, articlePair) =>{
   try {
     const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
 
     const restOperation = get({ 
       apiName: 'ascpi',
-      path: '/articles',
+      
+      path: `/articles/${id}?pair=${articlePair}`,
       options: {
         headers: {
-          // @ts-ignore: Unreachable code error
           Authorization: idToken,
-          'X-Amz-Date': new Date().getTime().toString()
+        }
+      }
+    });
+    const response = await restOperation.response;
+    console.log('GET call succeeded: ', response);
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export const getArticles = async(articlePair) =>{
+  try {
+    const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
+    
+    const sessionInfo = await fetchAuthSession()
+    console.log(sessionInfo)
+    const userInfo = await getCurrentUser()
+    console.log(userInfo)
+
+    const restOperation = get({ 
+      apiName: 'ascpi',
+      path: `/articles?pair=${articlePair}`,
+      options: {
+        headers: {
+          Authorization: idToken,
         }
       }
     });
@@ -30,45 +53,21 @@ export const getArticle = async() =>{
 }
 
 
-export const getArticles = async (token) =>{
-    myHeaders = new Headers({
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/x-www-form-urlencoded'
-      });
+export const paymentIntent = async(amount, currency) =>{
+  const bodyy = { currency: currency, amount: amount };
 
-    fetch(`${server}`, {method:"GET", headers: myHeaders});
-}
-
-
-/*export const getArticle = async() =>{
   try {
-    const session = (await fetchAuthSession());
-    console.log(session)
+    const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
 
-    const idToken = session.tokens?.idToken?.toString();
-
-
-    const signedRequest = sigV4Client
-    .newClient({
-      accessKey: session.credentials.accessKeyId,
-      secretKey: session.credentials.secretAccessKey,
-      sessionToken: idToken,
-      region: "eu-west-1",
-      endpoint: server
-    })
-    .signRequest({
-      method: "GET",
-      path: `${server}/articles`,
-      headers: {Authorization: "123"},
-      queryParams: "lol=123",
-      body: {a: "123"}
-    });
-
-    const restOperation = get({ 
+    const restOperation = post({ 
       apiName: 'ascpi',
-      path: '/articles',
+      path: '/paymentIntent',
+      
       options: {
-        headers: signedRequest
+        headers: {
+          Authorization: idToken,
+        },
+        body: bodyy
       }
     });
     const response = await restOperation.response;
@@ -76,4 +75,6 @@ export const getArticles = async (token) =>{
   } catch (e) {
     console.log(e)
   }
-}*/
+}
+
+
