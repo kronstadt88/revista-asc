@@ -2,13 +2,12 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useColorScheme} from 'react-native';
-import { SessionProvider } from '../services/ctx';
-
-import { confirmSignUp, ConfirmSignUpInput, signIn, type SignInInput } from 'aws-amplify/auth';
-import { handleConfirmSignUp, type SignUpInput } from 'aws-amplify/auth';
+import {  signIn, type SignInInput } from 'aws-amplify/auth';
+import { TextFieldOptionsType } from '@aws-amplify/ui-react-native/dist/Authenticator/hooks';
 import { Authenticator } from '@aws-amplify/ui-react-native';
+import { Checkbox, Radio } from '@aws-amplify/ui-react-native/dist/primitives';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -44,23 +43,9 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
-async function handleSignUpConfirmation({
-  username,
-  confirmationCode
-}: ConfirmSignUpInput) {
-  return await confirmSignUp({
-    username,
-    confirmationCode
-  });
-  try {
-    return await confirmSignUp({
-      username,
-      confirmationCode
-    });
-  } catch (error) {
-    alert('error confirming sign up' + error);
-  }
-}
+
+
+
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
@@ -70,20 +55,60 @@ function RootLayoutNav() {
       <Authenticator
       components={{
         SignUp: ({ fields, ...props }) => (
-          <Authenticator.SignUp
+          
+          <Authenticator.SignUp 
             {...props}
             fields={[
               ...fields,
               {
-                name: 'preferred_username',
-                label: 'Preferred Username',
+                name: 'given_name',
+                label: 'Enter your name',
                 type: 'default',
                 placeholder: 'Enter your preferred username',
                 //required: true
               },
+              {
+                name: 'family_name',
+                label: 'Enter your lastname',
+                type: 'default',
+                placeholder: 'Enter your lastname',
+                
+                //required: true
+              },
+              {
+                name: 'phone_number',
+                label: 'Phone Number',
+                type: 'phone',
+                placeholder: 'Enter your phone number',
+                //required: true
+              },
+              {
+                name: 'address',
+                label: 'Address',
+                type: 'default',
+                placeholder: 'Enter your address',
+                //required: true
+              },
+              {
+                name: 'birthdate',
+                label: 'Birthdate',
+                type: 'default',
+                placeholder: 'Enter your birthdate',
+                //required: true
+              },
+              
+              {
+                name: 'zoneinfo',
+                label: 'Zone info',
+                type: 'default',
+                placeholder: 'Enter your zone',
+                //required: true
+              },
+              
             ]}
           />
-        ),
+          
+        )
       }}
       
         services={{
@@ -95,8 +120,6 @@ function RootLayoutNav() {
               
             }),
             
-          handleConfirmSignUp: async ({ username, confirmationCode }: ConfirmSignUpInput) =>
-            handleSignUpConfirmation({username, confirmationCode})
         
         }}>
 

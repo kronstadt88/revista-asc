@@ -12,14 +12,14 @@ import { get } from 'aws-amplify/api';
 import { useEffect } from "react";
 
 import { fetchAuthSession } from 'aws-amplify/auth'
+import sigV4Client from '../../utils/sigV4Client'
+import { getArticle } from "../../services";
 
 
 function Article() {
 
   useEffect(()=>{
-
-    
-    //getTodo()
+    getArticle()
   }, [])
 
   async function getTodo() {
