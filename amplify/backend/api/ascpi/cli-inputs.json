@@ -1,6 +1,19 @@
 {
   "version": 1,
   "paths": {
+    "/users": {
+      "name": "/users",
+      "lambdaFunction": "getUsers",
+      "permissions": {
+        "setting": "private",
+        "auth": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ]
+      }
+    },
     "/articles": {
       "name": "/articles",
       "lambdaFunction": "getArticle",
@@ -12,13 +25,6 @@
           "update",
           "delete"
         ]
-      }
-    },
-    "/sign-up": {
-      "name": "/sign-up",
-      "lambdaFunction": "getArticle",
-      "permissions": {
-        "setting": "open"
       }
     }
   }

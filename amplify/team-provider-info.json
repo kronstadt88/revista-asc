@@ -13,18 +13,25 @@
       "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-revistaasc-dev-141602-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
     },
     "categories": {
+      "auth": {
+        "revistaasc2bed4ced": {},
+        "userPoolGroups": {}
+      },
       "function": {
         "getArticle": {
           "deploymentBucketName": "amplify-revistaasc-dev-141602-deployment",
           "s3Key": "amplify-builds/getArticle-59484944705870414772-build.zip"
+        },
+        "getUsers": {
+          "deploymentBucketName": "amplify-revistaasc-dev-141602-deployment",
+          "s3Key": "amplify-builds/getUsers-6b6543416e4536413869-build.zip"
         }
+      },
+      "storage": {
+        "users": {}
       },
       "api": {
         "ascpi": {}
-      },
-      "auth": {
-        "revistaasc2bed4ced": {},
-        "userPoolGroups": {}
       }
     }
   }

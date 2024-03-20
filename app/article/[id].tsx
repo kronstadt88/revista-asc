@@ -19,7 +19,7 @@ function Article() {
   useEffect(()=>{
 
     
-    //getTodo()
+    getTodo()
   }, [])
 
   async function getTodo() {
@@ -33,7 +33,6 @@ function Article() {
           headers: {
             // @ts-ignore: Unreachable code error
             Authorization: idToken,
-            'X-Amz-Date': new Date().getTime().toString()
           }
         }
       });
