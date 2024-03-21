@@ -8,6 +8,9 @@
     "@types/aws-lambda": "^8.10.92"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.535.0"
+    "@aws-sdk/client-dynamodb": "^3.535.0",
+    "express": "^4.19.1",
+    "serverless-http": "^3.2.0",
+    "uuid": "^9.0.1"
   }
 }

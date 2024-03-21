@@ -1,63 +1,167 @@
-import { StyleSheet, View, Pressable, useColorScheme, } from "react-native";
-import { useLocalSearchParams } from 'expo-router';
-import { Avatar, Button, Card, Text } from 'react-native-paper';
+import { StyleSheet, View, Pressable, useColorScheme } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import { Avatar, Button, Card, Text, TextInput } from "react-native-paper";
 import { withAuthenticator } from "@aws-amplify/ui-react-native";
-const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
+const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
 
+import { mediumTime } from "../../utils/utils";
 import { useEffect, useState } from "react";
 
+import DocumentPicker, {
+  DirectoryPickerResponse,
+  DocumentPickerResponse,
+  isCancel,
+  isInProgress,
+  types,
+} from "react-native-document-picker";
 
-import { getArticle, getArticles } from "../../services";
-
+import { getArticle, getArticles, putArticle, postArticle } from "../../services";
 
 function Article() {
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState<any>({mode: false, selected:""});
+  const [addMode, setAddMode] = useState(false);
+  const [editText, setEditText] = useState();
+  const [addText, setAddText] = useState();
 
-  const [articles, setArticles] = useState([]);
+  const [articlesArray, setArticlesArray] = useState([]);
 
   const item = useLocalSearchParams();
 
-  useEffect(()=>{
-    getArticles(item.id)
-      
-  }, [])
+  const fetchArticles = async () => {
+    let articles = await getArticles(item.id);
+    return articles.body.json();
+  };
 
+  const putArticleCallback = async (image:any, createdAt: any, pair: any) => {
+    await putArticle(editMode.selected, editText, image, createdAt, pair);
+    await fetchArticles().then((articlesPromise) => {
+      setArticlesArray(articlesPromise.Items);
+    });
+    setEditMode({mode: false, selected: ""});
+  };
 
-  const { slug } = useLocalSearchParams();
+  const postArticleCallback = async (image:any) => {
+    await postArticle(image, addText, item.id);
+    await fetchArticles().then((articlesPromise) => {
+      setArticlesArray(articlesPromise.Items);
+    });
+    setEditMode({mode: false, selected: ""});
+  };
   
-  
+
+  useEffect(() => {
+    fetchArticles().then((articlesPromise) => {
+      setArticlesArray(articlesPromise.Items);
+    });
+  }, []);
+
   return (
     <View style={styles.container}>
       <Card>
         <Card.Title title="Forex" subtitle={item.id} left={LeftContent} />
-        <Card.Content>
-          <Text variant="titleLarge">Análisis 23/01/2024</Text>
-          <Text variant="bodyMedium"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed tempus urna et pharetra pharetra massa massa. Consectetur a erat nam at lectus urna duis. Commodo ullamcorper a lacus vestibulum sed arcu non. Arcu dui vivamus arcu felis bibendum ut tristique et egestas. Enim neque volutpat ac tincidunt vitae semper quis lectus nulla. Suscipit tellus mauris a diam maecenas sed enim. Velit euismod in pellentesque massa placerat duis ultricies lacus sed. Lobortis elementum nibh tellus molestie nunc non. Tristique nulla aliquet enim tortor at auctor urna nunc id. </Text>
-        </Card.Content>
-        <Card.Cover source={{ uri: 'https://img.freepik.com/premium-photo/creative-glowing-forex-chart-with-map-dark-blue-background-trade-finance-concept-3d-rendering_670147-11936.jpg' }} />
-        <Card.Actions>
-          <Button onPress={()=>getArticles(item.id)}>Editar</Button>
-          <Button>Añadir</Button>
-        </Card.Actions>
       </Card>
+      {editMode.mode && (
+        <>
+          <View style={styles.articleContainer}>
+            <Card>
+              <TextInput
+                label="Email"
+                value={editText}
+                onChangeText={(text: any) => setEditText(text)}
+              />
+              <Button style={styles.button}  mode="contained" onPress={() => {}}>
+                Upload image
+              </Button>
+              <Card.Actions>
+                <Button onPress={() => setEditMode({mode: false, selected:""})}>Cancelar </Button>
+                <Button onPress={() => putArticleCallback("", editMode.selected.created_at, editMode.selected.pair)}>Guardar</Button>
+              </Card.Actions>
+            </Card>
+          </View>
+        </>
+      )}
+
+      {addMode && (
+        <>
+          <View style={styles.articleContainer}>
+            <Card>
+              <TextInput
+                label="Texto del artículo"
+                value={addText}
+                onChangeText={(text: any) => setAddText(text)}
+              />
+              <Button style={styles.button}  mode="contained" onPress={() => {}}>
+                Upload image
+              </Button>
+              <Card.Actions>
+                <Button onPress={() => setAddMode(!addMode)}>Cancelar </Button>
+                <Button onPress={() => postArticleCallback("")}>Guardar</Button>
+              </Card.Actions>
+            </Card>
+          </View>
+        </>
+      )}
+
+      {!addMode && !editMode.mode && (
+        <>
+          <Button style={styles.button}  mode="contained" onPress={() => setAddMode(!addMode)}>
+            Add new Article
+          </Button>
+          
+          {articlesArray.map((article: any, index) => {
+            return (
+              <View style={styles.articleContainer} key={index}>
+                
+                <Card>
+                <Card.Title title={item.id} subtitle={mediumTime.format(new Date(article.created_at))}left={LeftContent} />
+                  <Card.Content key={index}>
+                    
+                    <Text style={styles.articleText} variant="bodyMedium">
+                      
+                      {article.text}
+                    </Text>
+                  </Card.Content>
+                  <Card.Cover
+                    style={styles.articleContainer}
+                    source={{
+                      uri: "https://img.freepik.com/premium-photo/creative-glowing-forex-chart-with-map-dark-blue-background-trade-finance-concept-3d-rendering_670147-11936.jpg",
+                    }}
+                  />
+                  <Card.Actions>
+                    <Button onPress={() => setEditMode({mode: !editMode.mode, selected:article})}>
+                      Editar
+                    </Button>
+                  </Card.Actions>
+                </Card>
+              </View>
+            );
+          })}
+        </>
+      )}
     </View>
-    
-     
   );
 }
 
-
 export default withAuthenticator(Article);
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
     overflow: "visible",
-    alignContent: "center",
+    alignContent: "center"
   },
   articleContainer: {
-    padding: 30,
+    margin: 30,
   },
+  articleText: {
+    marginTop: 20,
+  },
+  button: {
+    margin: 30,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingRight: 40,
+    paddingLeft: 40    
+  }
 });
