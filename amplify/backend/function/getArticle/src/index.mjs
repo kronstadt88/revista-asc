@@ -12,8 +12,12 @@ import {
   DeleteCommand,
 } from "@aws-sdk/lib-dynamodb";
 
-//import AWS from '@aws-sdk';
-//const s3 = new AWS.S3();
+import { v1 as uuidv1 } from 'uuid';
+import AWS from 'aws-sdk';
+
+const s3 = new AWS.S3();
+
+const bucketName = "asc-images";
 
 const client = new DynamoDBClient({});
 
@@ -24,6 +28,7 @@ const tableName = "articles";
 export const handler = async (event) => {
   let article;
   let requestJSON = JSON.parse(event.body);
+  
   
   try{
    if (event.resource === "/articles/{proxy+}" && event.httpMethod === "GET") {
@@ -47,23 +52,50 @@ export const handler = async (event) => {
             "#pair": "pair",
           },
           ExpressionAttributeValues: { ":pair_val": event.queryStringParameters.pair }
-          
         })
       );
-      
-      
-      
+      /*article = article.Items.map(async item=>{
+        let imageFromS3 = await s3.getObject({Bucket: bucketName, Key: item.image}).promise();
+        return {
+          ...item,
+          image: Buffer.from(imageFromS3.Body).toString("base64")
+        }
+      })*/
     }
     
     if (event.resource === "/articles" && event.httpMethod === "POST") {
+        let uploadResult;
+        try{
+          const base64File = requestJSON.image;
+          const decodedFile = Buffer.from(base64File, "base64");
+
+          const params = {
+            Bucket: bucketName,
+            Key: `/images/${new Date().toISOString()}.jpg`,
+            Body: decodedFile,
+            ContentType: 'image/jpg'
+          }
+
+          uploadResult = await s3.upload(params).promise();
+
+          
+
+        }catch(e){
+          return {
+            isBase64Encoded: true,
+            statusCode: 200,
+            headers: { "Access-Control-Allow-Origin": "*" },
+            body: JSON.stringify(e),
+          };
+        }
       
         article = await dynamo.send(
           new PutCommand({
             TableName: tableName,
             Item: {
-              id: "49",
+              id: uuidv1(),
               text: requestJSON.text,
-              image:"URL image",
+              image: uploadResult.Key,
               pair: requestJSON.pair,
               created_at: new Date().toString(),
               updated_at: new Date().toString(),
@@ -73,6 +105,31 @@ export const handler = async (event) => {
     } 
   
     if (event.resource === "/articles/{proxy+}" && event.httpMethod === "PUT") {
+
+      let uploadResult;
+        try{
+          const base64File = requestJSON.image;
+          const decodedFile = Buffer.from(base64File, "base64");
+
+          const params = {
+            Bucket: bucketName,
+            Key: `/images/${new Date().toISOString()}.jpg`,
+            Body: decodedFile,
+            ContentType: 'image/jpg'
+          }
+
+          uploadResult = await s3.upload(params).promise();
+          
+          
+
+        }catch(e){
+          return {
+            isBase64Encoded: true,
+            statusCode: 200,
+            headers: { "Access-Control-Allow-Origin": "*" },
+            body: JSON.stringify(e),
+          };
+        }
       
         article = await dynamo.send(
           new PutCommand({
@@ -80,7 +137,7 @@ export const handler = async (event) => {
             Item: {
               id: JSON.parse(event.pathParameters.proxy).toString(),
               text: requestJSON.text,
-              image:"URL image",
+              image:uploadResult.Key,
               pair: requestJSON.pair,
               created_at: requestJSON.createdAt,
               updated_at: new Date().toString(),
@@ -101,9 +158,9 @@ export const handler = async (event) => {
   
   
     return {
-    isBase64Encoded: true,
-    statusCode: 200,
-    headers: { "Access-Control-Allow-Origin": "*" },
-    body: JSON.stringify(article),
-  };
+      isBase64Encoded: true,
+      statusCode: 200,
+      headers: { "Access-Control-Allow-Origin": "*" },
+      body: JSON.stringify(article),
+    };
 };

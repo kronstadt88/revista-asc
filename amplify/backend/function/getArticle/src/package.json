@@ -9,8 +9,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.535.0",
-    "express": "^4.19.1",
-    "serverless-http": "^3.2.0",
+    "aws-sdk": "^2.1582.0",
     "uuid": "^9.0.1"
   }
 }
