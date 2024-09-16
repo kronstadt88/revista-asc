@@ -1,83 +1,248 @@
-import { StyleSheet, View, Pressable, useColorScheme, } from "react-native";
-import { useLocalSearchParams } from 'expo-router';
-import { Avatar, Button, Card, Text } from 'react-native-paper';
+import { StyleSheet, ScrollView, View, Alert, Image } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import { Button, Card, Text, TextInput } from "react-native-paper";
 import { withAuthenticator } from "@aws-amplify/ui-react-native";
-const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
 
-import { Amplify } from 'aws-amplify';
-import amplifyconfig from '../../src/amplifyconfiguration.json';
-Amplify.configure(amplifyconfig);
+import * as ImagePicker from "expo-image-picker"; 
 
-import { get } from 'aws-amplify/api';
-import { useEffect } from "react";
+import { mediumTime } from "../../utils/utils";
+import { useEffect, useState } from "react";
 
-import { fetchAuthSession } from 'aws-amplify/auth'
-import sigV4Client from '../../utils/sigV4Client'
-import { getArticle } from "../../services";
-
+import { getArticle, getArticles, putArticle, postArticle } from "../../services";
 
 function Article() {
+  const [editMode, setEditMode] = useState<any>({mode: false, selected:""});
+  const [addMode, setAddMode] = useState(false);
+  const [addText, setAddText] = useState();
 
-  useEffect(()=>{
-    getArticle()
-  }, [])
+  const [articlesArray, setArticlesArray] = useState([]);
 
-  async function getTodo() {
-    try {
-      const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
+  const [file, setFile] = useState<any>(null); 
+  const [error, setError] = useState(null); 
 
-      const restOperation = get({ 
-        apiName: 'ascpi',
-        path: '/articles',
-        options: {
-          headers: {
-            // @ts-ignore: Unreachable code error
-            Authorization: idToken,
-          }
-        }
-      });
-      const response = await restOperation.response;
-      console.log('GET call succeeded: ', response);
-    } catch (e) {
-      console.log(e)
-    }
-  }
+  const item = useLocalSearchParams();
 
-  const { slug } = useLocalSearchParams();
-  const colorScheme = useColorScheme();
-  console.log(slug)
+  const pickImage = async () => { 
+    const { status } = await ImagePicker. 
+        requestMediaLibraryPermissionsAsync(); 
+
+    if (status !== "granted") { 
+
+        // If permission is denied, show an alert 
+        Alert.alert( 
+            "Permission Denied", 
+            `Sorry, we need camera  
+             roll permission to upload images.` 
+        ); 
+    } else { 
+
+        // Launch the image library and get 
+        // the selected image 
+        const result: any = 
+            await ImagePicker.launchImageLibraryAsync(); 
+
+        if (!result.canceled) { 
+
+            // If an image is selected (not cancelled),  
+            // update the file state variable 
+            setFile(result.uri); 
+
+            // Clear any previous errors 
+            setError(null); 
+        } 
+    } 
+}; 
+
+  const fetchArticles = async () => {
+    let articles = await getArticles(item.id);
+    return articles.body.json();
+  };
+
+  const putArticleCallback = async (createdAt: any, pair: any) => {
+    await putArticle(editMode.selected, editMode.selected.text, file, createdAt, pair);
+    await fetchArticles().then((articlesPromise) => {
+      setArticlesArray(articlesPromise.Items);
+    });
+    setEditMode({mode: false, selected: ""});
+  };
+
+  const postArticleCallback = async (image:any) => {
+    await postArticle(file, addText, item.id);
+    await fetchArticles().then((articlesPromise) => {
+      setArticlesArray(articlesPromise.Items);
+    });
+    setAddMode(false);
+  };
+  
+
+  useEffect(() => {
+    fetchArticles().then((articlesPromise) => {
+      setArticlesArray(articlesPromise.Items);
+    });
+  }, []);
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Card>
-        <Card.Title title="Forex" subtitle="EurUsd" left={LeftContent} />
-        <Card.Content>
-          <Text variant="titleLarge">Análisis 23/01/2024</Text>
-          <Text variant="bodyMedium"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed tempus urna et pharetra pharetra massa massa. Consectetur a erat nam at lectus urna duis. Commodo ullamcorper a lacus vestibulum sed arcu non. Arcu dui vivamus arcu felis bibendum ut tristique et egestas. Enim neque volutpat ac tincidunt vitae semper quis lectus nulla. Suscipit tellus mauris a diam maecenas sed enim. Velit euismod in pellentesque massa placerat duis ultricies lacus sed. Lobortis elementum nibh tellus molestie nunc non. Tristique nulla aliquet enim tortor at auctor urna nunc id. </Text>
-        </Card.Content>
-        <Card.Cover source={{ uri: 'https://img.freepik.com/premium-photo/creative-glowing-forex-chart-with-map-dark-blue-background-trade-finance-concept-3d-rendering_670147-11936.jpg' }} />
-        <Card.Actions>
-          <Button onPress={()=>getTodo()}>Cancel</Button>
-          <Button>Okk</Button>
-        </Card.Actions>
+        <Card.Title title="Forex" subtitle={item.id} />
       </Card>
-    </View>
-    
-     
+      {editMode.mode && (
+        <>
+          <View style={styles.articleContainer}>
+            <Card>
+            <Card.Title title="Editando artículo"/>
+              <TextInput
+                label="Texto para el artículo"
+                multiline={true}
+                numberOfLines = {10}
+                value={editMode.selected.text}
+                onChangeText={(text: any) => setEditMode({mode: true, selected: { ...editMode.selected, text}})}
+              />
+              <Image source={{ uri: editMode.selected.image }} 
+                        style={styles.image} resizeMode="contain" /> 
+              <Button style={styles.button}  mode="contained" onPress={() => pickImage()}>
+                Upload image
+              </Button>
+              
+              <Card.Actions>
+                <Button onPress={() => setEditMode({mode: false, selected:""})}>Cancelar </Button>
+                <Button onPress={() => putArticleCallback(editMode.selected.created_at, editMode.selected.pair)}>Guardar</Button>
+              </Card.Actions>
+            </Card>
+          </View>
+        </>
+      )}
+
+      {addMode && (
+        <>
+          <View style={styles.articleContainer}>
+            <Card>
+            <Card.Title title="Añadiendo artículo"/>
+              <TextInput
+                label="Texto del artículo"
+                multiline={true}
+                numberOfLines={10}
+                value={addText}
+                onChangeText={(text: any) => setAddText(text)}
+              />
+              <Button style={styles.button}  mode="contained" onPress={() => pickImage()}>
+                Upload image
+              </Button>
+
+                
+              {file ? ( 
+                // Display the selected image 
+                
+                    <Image source={{ uri: file }} 
+                        style={styles.image}  resizeMode="contain" /> 
+                
+            ) : ( 
+                // Display an error message if there's  
+                // an error or no image selected 
+                <Text style={styles.errorText}>{error}</Text> 
+            )} 
+              <Card.Actions>
+                <Button onPress={() => setAddMode(!addMode)}>Cancelar </Button>
+                <Button onPress={() => postArticleCallback("")}>Guardar</Button>
+              </Card.Actions>
+            </Card>
+          </View>
+        </>
+      )}
+
+      {!addMode && !editMode.mode && (
+        <>
+          <Button style={styles.addArticleButton}  mode="outlined" onPress={() => setAddMode(!addMode)}>
+            Add new Article
+          </Button>
+          
+          {articlesArray.map((article: any, index) => {
+            return (
+              <View style={styles.articleContainer} key={index}>
+                
+                <Card style={styles.cardStyle} >
+                <Card.Title title={item.id} subtitle={mediumTime.format(new Date(article.created_at))} />
+                  <Card.Content key={index} style={styles.cardContentStyle}>
+                    <View style={styles.cardContentViewStyle}>
+                      <Text style={styles.articleText} variant="bodyMedium">
+                      {article.text}
+                    </Text>
+                    <Image source={{ uri: article.image, }} 
+                        style={styles.image} resizeMode="contain" /> 
+                    </View>
+                  </Card.Content>
+                  
+                  <Card.Actions>
+                    <Button onPress={() => setEditMode({mode: !editMode.mode, selected:article})}>
+                      Editar
+                    </Button>
+                  </Card.Actions>
+                </Card>
+              </View>
+            );
+          })}
+        </>
+      )}
+    </ScrollView>
   );
 }
 
-
 export default withAuthenticator(Article);
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    overflow: "visible",
     alignContent: "center",
   },
-  articleContainer: {
-    padding: 30,
+  addArticleButton: {
+    margin: 30,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingRight: 40,
+    paddingLeft: 40    
   },
+  articleContainer: {
+    margin: 30,
+  },
+  cardContentStyle:{
+    height: 100,
+    marginBottom: 200
+  },
+  
+  cardContentViewStyle:{
+    height: 100,
+    marginBottom: 20
+  },
+  cardStyle: {
+    backgroundColor: 'white',
+  },
+  articleText: {
+    marginTop: 20,
+  },
+  
+  header: { 
+      fontSize: 20, 
+      marginBottom: 16, 
+  }, 
+  buttonText: { 
+      color: "#FFFFFF", 
+      fontSize: 16, 
+      fontWeight: "bold", 
+  }, 
+  imageContainer: { 
+      marginBottom: 16, 
+      justifyContent: "center",
+      alignItems:"center"
+  }, 
+  image: { 
+      
+      height: 200, 
+      borderRadius: 8,
+      
+  }, 
+  errorText: { 
+      color: "red", 
+      marginTop: 16, 
+  }, 
 });

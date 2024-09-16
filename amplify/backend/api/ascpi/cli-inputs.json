@@ -1,9 +1,9 @@
 {
   "version": 1,
   "paths": {
-    "/users": {
-      "name": "/users",
-      "lambdaFunction": "getUsers",
+    "/articles": {
+      "name": "/articles",
+      "lambdaFunction": "getArticle",
       "permissions": {
         "setting": "private",
         "auth": [
@@ -14,9 +14,22 @@
         ]
       }
     },
-    "/articles": {
-      "name": "/articles",
-      "lambdaFunction": "getArticle",
+    "/paymentIntent": {
+      "name": "/paymentIntent",
+      "lambdaFunction": "paymentIntent",
+      "permissions": {
+        "setting": "private",
+        "auth": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ]
+      }
+    },
+    "/users": {
+      "name": "/users",
+      "lambdaFunction": "getUsers",
       "permissions": {
         "setting": "private",
         "auth": [

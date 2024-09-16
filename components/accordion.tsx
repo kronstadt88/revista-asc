@@ -49,6 +49,11 @@ const data = [
     id: 6,
     title: 'Shares',
     description:["Santander", "Bbva"]
+  },
+  {
+    id: 7,
+    title: 'Actualidad',
+    description:["Actualidad"]
   }
 ];
 
@@ -122,7 +127,7 @@ const AccordionItem = ({title, description}) => {
                         <View style={styles.articlesContainer} key={index}>
                           <Link href={`/article/${item.toLowerCase().replace("/", "")}`} >
                             
-                              <Text>{item}1234 </Text>
+                              <Text>{item}</Text>
                             
                           </Link>
                             

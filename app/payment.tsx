@@ -2,120 +2,233 @@
 // https://aboutreact.com/react-native-login-and-signup/
 
 // Import React and Component
+
+/*
 import React, { useState, createRef, useEffect } from "react";
 import {
   StyleSheet,
   TextInput,
   View,
   Text,
-  ScrollView,
-  
-  Keyboard,
+  Alert,
   TouchableOpacity,
-  KeyboardAvoidingView,
 } from "react-native";
 
-//import { StripeProvider, CardForm, CardField } from '@stripe/stripe-react-native';
-import { useSession } from '../services/ctx';
-
-
-
-import { Amplify} from 'aws-amplify';
-import awsconfig from '../src/amplifyconfiguration.json';
-Amplify.configure(awsconfig);
-
-
-
-type SignInParameters = {
-  username: string;
-  password: string;
-};
-
-
-export async function signIn({ username, password }: SignInParameters) {
-  try {
-    //await Auth.signIn(username, password);
-  } catch (error) {
-    console.log('error signing in', error);
-  }
-}
+//import { CardField, CardForm, StripeProvider, useStripe } from '@stripe/stripe-react-native';
+import {
+  
+  withAuthenticator,
+} from '@aws-amplify/ui-react-native';
 
 
 
 const PaymentScreen = () => {
-  
 
-  /*return (
-    <View style={styles.container}>
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
+  const [loading, setLoading] = useState(false);
+  const [items, setItems] = useState([]);
+
+  const fetchPaymentSheetParams = async () => {
+    const response = await fetch(`https://yourBackendApi/paymentIntent`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  
+    const { paymentIntentId, ephemeralKey, customerId } = await response.json();
+  
+    return {
+      paymentIntent: paymentIntentId,
+      ephemeralKey,
+      customer: customerId,
+    };
+  };
+
+  const initializePaymentSheet = async () => {
+    const { paymentIntent, ephemeralKey, customer } =
+      await fetchPaymentSheetParams();
+  
+    const { error } = await initPaymentSheet({
+      merchantDisplayName: "Merchant",
+      customerId: customer,
+      customerEphemeralKeySecret: ephemeralKey,
+      paymentIntentClientSecret: paymentIntent,
+    });
+  
+    if (!error) {
+      setLoading(true);
+    }
+  };
+  
+  useEffect(() => {
+    initializePaymentSheet();
+    setItems({id:"1", name: "123", price:123})
+  }, []);
+  
+  const openPaymentSheet = async () => {
+    const { error } = await presentPaymentSheet();
+  
+    if (error) {
+      Alert.alert(`Error code: ${error.code}`, error.message);
+    } else {
+      Alert.alert("Success", "Your order is confirmed!");
+    }
+  };
+
+  return (
+    <View style={styles.mainContainer}>
       <Text>12333</Text>
       <StripeProvider
       publishableKey="pk_test_51OthaURvdA3t4SZBMnop8NP6tXvOpDv4hJYO7S8eHSAIsmG5BYCHigKirpZt7hkTLfYipw7sO5pxXkNd5GlyIQUH00fRJkpcR7"
       urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
       merchantIdentifier="merchant.com.myapp" // required for Apple Pay
     >
-      <CardField></CardField>
-      <CardForm style={{height: 200}}/>
+      
+    <View style={styles.mainContainer}>
+      <View style={styles.boxedContainer}>
+        <View style={styles.cartContainer}>
+          <Text style={styles.headingText}>Your Cart</Text>
+        </View>
+        {items.map((item) => (
+          <View key={item.id} style={styles.cardContainer}>
+            
+            <View style={styles.row}>
+              <Text style={styles.cartItemText}>{item.name}</Text>
+              <View style={styles.divider} />
+              <Text style={styles.cartItemText}>${item.price}</Text>
+            </View>
+          </View>
+        ))}
+        <View style={styles.checkoutAreaContainer}>
+            <TouchableOpacity
+            disabled={!loading}
+            onPress={openPaymentSheet}
+            style={styles.checkoutButton}
+            >
+            <Text style={styles.checkoutText}>Checkout</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  
       
     </StripeProvider>
     </View>
-  );*/
+  );
 };
-export default PaymentScreen
+export default withAuthenticator(PaymentScreen)
+
+const styles = StyleSheet.create({
+  mainContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+    backgroundColor: "gray",
+  },
+  boxedContainer: {
+    width: "80%",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 5,
+    backgroundColor: "#9c333c",
+  },
+  cardContainer: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    paddingHorizontal: 16,
+    alignItems: "center",
+    paddingVertical: 8,
+  },
+  image: { width: 80, height: 40 },
+  row: {
+    flexGrow: 1,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  checkoutButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 5,
+    backgroundColor: "#db0d48",
+  },
+  headingText: { fontSize: 24, color: "white" },
+  cartItemText: { fontSize: 16, color: "black" },
+  divider: { marginLeft: 16 },
+  checkoutAreaContainer: {
+    alignItems: "center",
+    marginTop: 16,
+  },
+  checkoutText: { fontSize: 16, color: "white" },
+  cartContainer: { marginVertical: 8 },
+});
+
+*/
+
+
+import { StyleSheet, Pressable , Text, View, TouchableOpacity} from 'react-native';
+import { Link, router } from "expo-router";
+import { PaperProvider } from 'react-native-paper';
+import { Button } from 'react-native-paper';
+import {
+  withAuthenticator
+} from '@aws-amplify/ui-react-native';
+
+import { paymentIntent } from '../services';
+import { useEffect } from 'react';
+
+
+
+function IndexScreen() {
+
+  useEffect(()=>{
+    paymentIntent
+    paymentIntent(123, 'usd')
+  },[])
+
+  return (
+    
+      <PaperProvider>
+      <View style={styles.container}>
+      
+      <Button style={styles.button}  mode="contained" onPress={() => router.push('/sign-in')}>
+        Sign In
+      </Button>
+
+      <Button style={styles.button} mode="contained" onPress={() => router.push('/payment')}>
+        Payment
+      </Button>
+
+      <Button style={styles.button}  mode="contained" onPress={() => router.push('/products')}>
+        Open Products
+      </Button>
+
+      <Button style={styles.button}  mode="contained" onPress={() => router.push('/article/eurusd')}>
+        Open Articles
+      </Button>
+      
+      
+    </View>
+    </PaperProvider>
+    
+    
+  );
+}
+
+export default withAuthenticator(IndexScreen);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
-    backgroundColor: "#fff",
-    alignContent: "center",
+    backgroundColor:"white",
+    flex: 1
   },
-  SectionStyle: {
-    flexDirection: "row",
-    height: 40,
-    marginTop: 20,
-    marginLeft: 35,
-    marginRight: 35,
-    margin: 10,
-  },
-  buttonStyle: {
-    backgroundColor: "#009688",
-    borderWidth: 0,
-    color: "#FFFFFF",
-    borderColor: "#317d0c",
-    height: 40,
-    alignItems: "center",
-    borderRadius: 30,
-    marginLeft: 35,
-    marginRight: 35,
-    marginTop: 20,
-    marginBottom: 25,
-  },
-  buttonTextStyle: {
-    color: "#FFFFFF",
-    paddingVertical: 10,
-    fontSize: 16,
-  },
-  inputStyle: {
-    backgroundColor:'white',
-    flex: 1,
-    color: "black",
-    paddingLeft: 15,
-    paddingRight: 15,
-    borderWidth: 1,
-    borderRadius: 30,
-    borderColor: "#dadae8",
-  },
-  registerTextStyle: {
-    color: "black",
-    textAlign: "center",
-    fontWeight: "bold",
-    fontSize: 14,
-    alignSelf: "center",
-    padding: 10,
-  },
-  errorTextStyle: {
-    color: "red",
-    textAlign: "center",
-    fontSize: 14,
-  },
+  button: {
+    margin: 30,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingRight: 40,
+    paddingLeft: 40,
+  }
+  
 });

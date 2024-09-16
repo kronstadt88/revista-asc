@@ -8,7 +8,7 @@
             "Arn"
           ],
           "category": "function",
-          "resourceName": "getUsers"
+          "resourceName": "getArticle"
         },
         {
           "attributes": [
@@ -16,7 +16,15 @@
             "Arn"
           ],
           "category": "function",
-          "resourceName": "getArticle"
+          "resourceName": "paymentIntent"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "getUsers"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -89,6 +97,17 @@
       ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    },
+    "pairs": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "paymentIntent": {
+      "build": true,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     }
   },
   "parameters": {
@@ -121,6 +140,22 @@
         {
           "category": "function",
           "resourceName": "getUsers"
+        }
+      ]
+    },
+    "AMPLIFY_function_paymentIntent_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "paymentIntent"
+        }
+      ]
+    },
+    "AMPLIFY_function_paymentIntent_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "paymentIntent"
         }
       ]
     }

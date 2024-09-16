@@ -6,8 +6,6 @@ import { useSession } from '../services/ctx';
 import { getArticles} from '../services/index'
 import { PaperProvider } from 'react-native-paper';
 import {
-  Authenticator,
-  useAuthenticator,
   withAuthenticator,
 } from '@aws-amplify/ui-react-native';
 
@@ -26,7 +24,7 @@ function Products() {
   return (
     <PaperProvider>
     <View style={styles.container}>
-      <Text>123</Text>
+      <AnimatedAcordion/>
     </View>
     </PaperProvider>
   );

@@ -32,8 +32,8 @@ function IndexScreen() {
         Sign In
       </Button>
 
-      <Button style={styles.button} mode="contained" onPress={() => router.push('/sign-up')}>
-        Sign Up
+      <Button style={styles.button} mode="contained" onPress={() => router.push('/payment')}>
+        Payment
       </Button>
 
       <SignOutButton/>

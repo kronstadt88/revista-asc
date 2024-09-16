@@ -1,24 +1,20 @@
-import sigV4Client from '../utils/sigV4Client'
-import { get } from 'aws-amplify/api';
+
+import { get, post, put, del } from 'aws-amplify/api';
 
 
-import { fetchAuthSession } from 'aws-amplify/auth'
+import { fetchAuthSession, getCurrentUser} from 'aws-amplify/auth'
 
-
-const server = "https://sgsldh5134.execute-api.eu-west-1.amazonaws.com";
-
-export const getArticle = async() =>{
+export const getArticle = async(id, articlePair) =>{
   try {
     const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
 
     const restOperation = get({ 
       apiName: 'ascpi',
-      path: '/articles',
+      
+      path: `/articles/${id}?pair=${articlePair}`,
       options: {
         headers: {
-          // @ts-ignore: Unreachable code error
           Authorization: idToken,
-          'X-Amz-Date': new Date().getTime().toString()
         }
       }
     });
@@ -29,46 +25,18 @@ export const getArticle = async() =>{
   }
 }
 
-
-export const getArticles = async (token) =>{
-    myHeaders = new Headers({
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/x-www-form-urlencoded'
-      });
-
-    fetch(`${server}`, {method:"GET", headers: myHeaders});
-}
-
-
-/*export const getArticle = async() =>{
+export const getUser = async(id, articlePair) =>{
   try {
-    const session = (await fetchAuthSession());
-    console.log(session)
-
-    const idToken = session.tokens?.idToken?.toString();
-
-
-    const signedRequest = sigV4Client
-    .newClient({
-      accessKey: session.credentials.accessKeyId,
-      secretKey: session.credentials.secretAccessKey,
-      sessionToken: idToken,
-      region: "eu-west-1",
-      endpoint: server
-    })
-    .signRequest({
-      method: "GET",
-      path: `${server}/articles`,
-      headers: {Authorization: "123"},
-      queryParams: "lol=123",
-      body: {a: "123"}
-    });
+    const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
 
     const restOperation = get({ 
       apiName: 'ascpi',
-      path: '/articles',
+      
+      path: `/articles/${id}?pair=${articlePair}`,
       options: {
-        headers: signedRequest
+        headers: {
+          Authorization: idToken,
+        }
       }
     });
     const response = await restOperation.response;
@@ -76,4 +44,225 @@ export const getArticles = async (token) =>{
   } catch (e) {
     console.log(e)
   }
-}*/
+}
+
+export const getArticles = async(articlePair) =>{
+  try {
+    const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
+    const restOperation = get({ 
+      apiName: 'ascpi',
+      path: `/articles?pair=${articlePair}`,
+      options: {
+        headers: {
+          Authorization: idToken,
+        }
+      }
+    });
+    const response = await restOperation.response;
+    console.log('GET call succeeded: ', response);
+    return response;
+    
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export const getUsers = async(articlePair) =>{
+  try {
+    const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
+    const restOperation = get({ 
+      apiName: 'ascpi',
+      path: `/articles?pair=${articlePair}`,
+      options: {
+        headers: {
+          Authorization: idToken,
+        }
+      }
+    });
+    const response = await restOperation.response;
+    console.log('GET call succeeded: ', response);
+    return response;
+    
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+
+
+export const postArticle = async(image= "", text, pair) =>{
+  try {
+    const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
+    const restOperation = post({ 
+      apiName: 'ascpi',
+      path: `/articles`,
+      options: {
+        headers: {
+          Authorization: idToken,
+        },
+        body:{
+          text, pair, image
+        }
+      }
+    });
+    const response = await restOperation.response;
+    console.log('GET call succeeded: ', response);
+    return response;
+    
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export const postUser = async(image= "", text, pair) =>{
+  try {
+    const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
+    const restOperation = post({ 
+      apiName: 'ascpi',
+      path: `/articles`,
+      options: {
+        headers: {
+          Authorization: idToken,
+        },
+        body:{
+          text, pair, image
+        }
+      }
+    });
+    const response = await restOperation.response;
+    console.log('GET call succeeded: ', response);
+    return response;
+    
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export const putArticle = async(article, text, image, createdAt, pair) =>{
+  try {
+    const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
+    const restOperation = put({ 
+      apiName: 'ascpi',
+      path: `/articles/${article.id}`,
+      options: {
+        headers: {
+          Authorization: idToken,
+        },
+        body:{
+          pair,
+          text,
+          image,
+          createdAt
+        }
+      }
+    });
+    const response = await restOperation.response;
+    console.log('GET call succeeded: ', response);
+    return response;
+    
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export const putUser = async(article, text, image, createdAt, pair) =>{
+  try {
+    const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
+    const restOperation = put({ 
+      apiName: 'ascpi',
+      path: `/articles/${article.id}`,
+      options: {
+        headers: {
+          Authorization: idToken,
+        },
+        body:{
+          pair,
+          text,
+          image,
+          createdAt
+        }
+      }
+    });
+    const response = await restOperation.response;
+    console.log('GET call succeeded: ', response);
+    return response;
+    
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export const deleteArticle = async(articlePair) =>{
+  try {
+    const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
+    const restOperation = del({ 
+      apiName: 'ascpi',
+      path: `/articles?pair=${articlePair}`,
+      options: {
+        headers: {
+          Authorization: idToken,
+        },
+        body:{
+          
+        }
+      }
+    });
+    const response = await restOperation.response;
+    console.log('GET call succeeded: ', response);
+    return response;
+    
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export const deleteUser = async(articlePair) =>{
+  try {
+    const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
+    const restOperation = del({ 
+      apiName: 'ascpi',
+      path: `/articles?pair=${articlePair}`,
+      options: {
+        headers: {
+          Authorization: idToken,
+        },
+        body:{
+          
+        }
+      }
+    });
+    const response = await restOperation.response;
+    console.log('GET call succeeded: ', response);
+    return response;
+    
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+
+export const paymentIntent = async(amount, currency) =>{
+  const bodyy = { currency: currency, amount: amount };
+
+  try {
+    const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
+
+    const restOperation = post({ 
+      apiName: 'ascpi',
+      path: '/paymentIntent',
+      
+      options: {
+        headers: {
+          Authorization: idToken,
+        },
+        body: bodyy
+      }
+    });
+    const response = await restOperation.response;
+    console.log('GET call succeeded: ', response);
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+
