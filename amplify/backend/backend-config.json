@@ -98,11 +98,66 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "pairs": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "paymentIntent": {
       "build": true,
       "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_getArticle_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getArticle"
+        }
+      ]
+    },
+    "AMPLIFY_function_getArticle_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getArticle"
+        }
+      ]
+    },
+    "AMPLIFY_function_getUsers_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getUsers"
+        }
+      ]
+    },
+    "AMPLIFY_function_getUsers_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getUsers"
+        }
+      ]
+    },
+    "AMPLIFY_function_paymentIntent_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "paymentIntent"
+        }
+      ]
+    },
+    "AMPLIFY_function_paymentIntent_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "paymentIntent"
+        }
+      ]
     }
   },
   "storage": {

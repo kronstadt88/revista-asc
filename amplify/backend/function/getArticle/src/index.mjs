@@ -25,7 +25,7 @@ const dynamo = DynamoDBDocumentClient.from(client);
 
 const tableName = "articles";
 
-export const handler = async (event) => {
+export const handler = async (event, context) => {
   let article;
   let requestJSON = JSON.parse(event.body);
   
@@ -53,26 +53,20 @@ export const handler = async (event) => {
           },
           ExpressionAttributeValues: { ":pair_val": event.queryStringParameters.pair }
         })
-      );
-      /*article = article.Items.map(async item=>{
-        let imageFromS3 = await s3.getObject({Bucket: bucketName, Key: item.image}).promise();
-        return {
-          ...item,
-          image: Buffer.from(imageFromS3.Body).toString("base64")
-        }
-      })*/
+      ); 
     }
     
     if (event.resource === "/articles" && event.httpMethod === "POST") {
         let uploadResult;
         try{
           const base64File = requestJSON.image;
-          const decodedFile = Buffer.from(base64File, "base64");
+          const decodedFile = Buffer.from(base64File.replace(/^data:image\/\w+;base64,/, ""),'base64')
 
           const params = {
             Bucket: bucketName,
-            Key: `/images/${new Date().toISOString()}.jpg`,
+            Key: `images/${new Date().getTime()}.jpg`,
             Body: decodedFile,
+            ContentEncoding: 'base64',
             ContentType: 'image/jpg'
           }
 
@@ -95,7 +89,7 @@ export const handler = async (event) => {
             Item: {
               id: uuidv1(),
               text: requestJSON.text,
-              image: uploadResult.Key,
+              image: uploadResult.Location,
               pair: requestJSON.pair,
               created_at: new Date().toString(),
               updated_at: new Date().toString(),
@@ -109,12 +103,14 @@ export const handler = async (event) => {
       let uploadResult;
         try{
           const base64File = requestJSON.image;
-          const decodedFile = Buffer.from(base64File, "base64");
+          
+          const decodedFile = Buffer.from(base64File.replace(/^data:image\/\w+;base64,/, ""),'base64');
 
           const params = {
             Bucket: bucketName,
-            Key: `/images/${new Date().toISOString()}.jpg`,
+            Key: `images/${new Date().getTime()}.jpg`,
             Body: decodedFile,
+            ContentEncoding: 'base64',
             ContentType: 'image/jpg'
           }
 
@@ -135,9 +131,10 @@ export const handler = async (event) => {
           new PutCommand({
             TableName: tableName,
             Item: {
-              id: JSON.parse(event.pathParameters.proxy).toString(),
+              id: event.pathParameters.proxy.toString(),
+              //id: context.awsRequestId,
               text: requestJSON.text,
-              image:uploadResult.Key,
+              image:uploadResult.Location,
               pair: requestJSON.pair,
               created_at: requestJSON.createdAt,
               updated_at: new Date().toString(),

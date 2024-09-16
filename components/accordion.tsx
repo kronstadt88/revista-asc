@@ -49,6 +49,11 @@ const data = [
     id: 6,
     title: 'Shares',
     description:["Santander", "Bbva"]
+  },
+  {
+    id: 7,
+    title: 'Actualidad',
+    description:["Actualidad"]
   }
 ];
 
