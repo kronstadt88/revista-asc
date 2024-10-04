@@ -1,10 +1,5 @@
-// Example of Splash, Login and Sign Up in React Native
-// https://aboutreact.com/react-native-login-and-signup/
 
-// Import React and Component
-
-/*
-import React, { useState, createRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -14,61 +9,75 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-//import { CardField, CardForm, StripeProvider, useStripe } from '@stripe/stripe-react-native';
 import {
-  
-  withAuthenticator,
-} from '@aws-amplify/ui-react-native';
+  CardField,
+  CardForm,
+  StripeProvider,
+  useStripe,
+} from "@stripe/stripe-react-native";
+import { Snackbar } from 'react-native-paper';
 
-
+import { withAuthenticator } from "@aws-amplify/ui-react-native";
+import { paymentIntentRequest } from "../services/index";
+import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-input";
 
 const PaymentScreen = () => {
-
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [loading, setLoading] = useState(false);
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState([
+    { id: "1", name: "Alerta judiada", price: 123 },
+  ]);
 
   const fetchPaymentSheetParams = async () => {
-    const response = await fetch(`https://yourBackendApi/paymentIntent`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  
-    const { paymentIntentId, ephemeralKey, customerId } = await response.json();
-  
+    
+
+    try {
+      const response: any = await paymentIntentRequest(123, "usd");
+      
+      const { paymentIntent, ephemeralKey, customerId } = await response.body.json();
+      
     return {
-      paymentIntent: paymentIntentId,
+      paymentIntent: paymentIntent,
       ephemeralKey,
       customer: customerId,
     };
+
+
+    } catch (e) {
+      console.log("An error has ocurred.");
+    }
+
+    
   };
 
   const initializePaymentSheet = async () => {
-    const { paymentIntent, ephemeralKey, customer } =
-      await fetchPaymentSheetParams();
-  
-    const { error } = await initPaymentSheet({
-      merchantDisplayName: "Merchant",
-      customerId: customer,
-      customerEphemeralKeySecret: ephemeralKey,
-      paymentIntentClientSecret: paymentIntent,
-    });
-  
-    if (!error) {
-      setLoading(true);
+    
+    try {
+      const { paymentIntent, ephemeralKey, customer } : any= await fetchPaymentSheetParams();
+
+
+      const { error } = await initPaymentSheet({
+        merchantDisplayName: "Merchant",
+        customerId: customer,
+        customerEphemeralKeySecret: ephemeralKey,
+        paymentIntentClientSecret: paymentIntent,
+      });
+
+      if (!error) {
+        setLoading(true);
+      }
+    } catch (e) {
+      console.log("error"+ e);
     }
   };
-  
+
   useEffect(() => {
     initializePaymentSheet();
-    setItems({id:"1", name: "123", price:123})
   }, []);
-  
+
   const openPaymentSheet = async () => {
     const { error } = await presentPaymentSheet();
-  
+    
     if (error) {
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
@@ -78,46 +87,34 @@ const PaymentScreen = () => {
 
   return (
     <View style={styles.mainContainer}>
-      <Text>12333</Text>
-      <StripeProvider
-      publishableKey="pk_test_51OthaURvdA3t4SZBMnop8NP6tXvOpDv4hJYO7S8eHSAIsmG5BYCHigKirpZt7hkTLfYipw7sO5pxXkNd5GlyIQUH00fRJkpcR7"
-      urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
-      merchantIdentifier="merchant.com.myapp" // required for Apple Pay
-    >
       
-    <View style={styles.mainContainer}>
-      <View style={styles.boxedContainer}>
-        <View style={styles.cartContainer}>
-          <Text style={styles.headingText}>Your Cart</Text>
-        </View>
-        {items.map((item) => (
-          <View key={item.id} style={styles.cardContainer}>
+      <StripeProvider
+        publishableKey="pk_test_51OthaURvdA3t4SZBMnop8NP6tXvOpDv4hJYO7S8eHSAIsmG5BYCHigKirpZt7hkTLfYipw7sO5pxXkNd5GlyIQUH00fRJkpcR7"
+        urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
+        merchantIdentifier="merchant.com.myapp" // required for Apple Pay
+      >
+        <View style={styles.mainContainer}>
+          <View style={styles.boxedContainer}>
+            <View style={styles.cartContainer}>
+              <Text style={styles.headingText}>Your Cart</Text>
+            </View>
             
-            <View style={styles.row}>
-              <Text style={styles.cartItemText}>{item.name}</Text>
-              <View style={styles.divider} />
-              <Text style={styles.cartItemText}>${item.price}</Text>
+            <View style={styles.checkoutAreaContainer}>
+              <TouchableOpacity
+                disabled={!loading}
+                onPress={openPaymentSheet}
+                style={styles.checkoutButton}
+              >
+                <Text style={styles.checkoutText}>Checkout</Text>
+              </TouchableOpacity>
             </View>
           </View>
-        ))}
-        <View style={styles.checkoutAreaContainer}>
-            <TouchableOpacity
-            disabled={!loading}
-            onPress={openPaymentSheet}
-            style={styles.checkoutButton}
-            >
-            <Text style={styles.checkoutText}>Checkout</Text>
-          </TouchableOpacity>
         </View>
-      </View>
-    </View>
-  
-      
-    </StripeProvider>
+      </StripeProvider>
     </View>
   );
 };
-export default withAuthenticator(PaymentScreen)
+export default withAuthenticator(PaymentScreen);
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -164,7 +161,7 @@ const styles = StyleSheet.create({
   cartContainer: { marginVertical: 8 },
 });
 
-*/
+/*
 
 
 import { StyleSheet, Pressable , Text, View, TouchableOpacity} from 'react-native';
@@ -232,3 +229,5 @@ const styles = StyleSheet.create({
   }
   
 });
+
+*/

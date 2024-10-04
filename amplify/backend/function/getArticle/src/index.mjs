@@ -63,7 +63,7 @@ export const handler = async (event, context) => {
           const decodedFile = Buffer.from(base64File.replace(/^data:image\/\w+;base64,/, ""),'base64')
 
           const params = {
-            Bucket: bucketName,
+            Bucket: bucketName, 
             Key: `images/${new Date().getTime()}.jpg`,
             Body: decodedFile,
             ContentEncoding: 'base64',

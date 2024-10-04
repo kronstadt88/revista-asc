@@ -12,11 +12,6 @@ import {
   DeleteCommand,
 } from "@aws-sdk/lib-dynamodb";
 
-import { v1 as uuidv1 } from 'uuid';
-import AWS from 'aws-sdk';
-
-const s3 = new AWS.S3();
-
 
 const client = new DynamoDBClient({});
 
@@ -32,11 +27,13 @@ export const handler = async (event) => {
   try{
    if (event.resource === "/users/{proxy+}" && event.httpMethod === "GET") {
       article = await dynamo.send(
-        new GetCommand({
+        new ScanCommand({
           TableName: tableName,
-          Key: {
-            id: JSON.parse(event.pathParameters.proxy).toString(),
+          FilterExpression: "#id = :id_val",
+          ExpressionAttributeNames: {
+            "#id": "id",
           },
+          ExpressionAttributeValues: { ":id_val": event.pathParameters?.proxy }
         })
       );
     }
@@ -46,11 +43,11 @@ export const handler = async (event) => {
       article = await dynamo.send(
         new ScanCommand({
           TableName: tableName,
-          FilterExpression: "#pair = :pair_val",
+          FilterExpression: "#id = :id_val",
           ExpressionAttributeNames: {
-            "#pair": "pair",
+            "#id": "id",
           },
-          ExpressionAttributeValues: { ":pair_val": event.queryStringParameters.pair }
+          ExpressionAttributeValues: { ":id_val": event.pathParameters?.id }
         })
       );
     }
@@ -61,9 +58,8 @@ export const handler = async (event) => {
           new PutCommand({
             TableName: tableName,
             Item: {
-              id: uuidv1(),
-              pairs: requestJSON.pairs,
-              created_at: new Date().toString(),
+              id: requestJSON.user,
+              subscription: requestJSON.subscription,
               updated_at: new Date().toString(),
             },
           })
@@ -79,8 +75,7 @@ export const handler = async (event) => {
             TableName: tableName,
             Item: {
               id: JSON.parse(event.pathParameters.proxy).toString(),
-              pairs: requestJSON.pairs,
-              created_at: requestJSON.createdAt,
+              subscription: requestJSON.subscription,
               updated_at: new Date().toString(),
             },
           })

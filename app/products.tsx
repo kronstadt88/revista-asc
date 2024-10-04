@@ -1,9 +1,7 @@
-import { StyleSheet, Text, View } from "react-native";
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { StyleSheet, View } from "react-native";
 import AnimatedAcordion from "../components/accordion";
 import { useEffect } from "react";
-import { useSession } from '../services/ctx';
-import { getArticles} from '../services/index'
+import { postUser, putUser, getUser} from '../services/index'
 import { PaperProvider } from 'react-native-paper';
 import {
   withAuthenticator,
@@ -11,21 +9,17 @@ import {
 
 
 function Products() {
-  const { session, isLoading } = useSession();
 
-  /*
-  
   useEffect(()=>{
-    getArticles()
+    getUser();
+    //postUser("eur,usd");
   }, [])
-  */
-
 
   return (
     <PaperProvider>
-    <View style={styles.container}>
-      <AnimatedAcordion/>
-    </View>
+      <View style={styles.container}>
+        <AnimatedAcordion/>
+      </View>
     </PaperProvider>
   );
 }
