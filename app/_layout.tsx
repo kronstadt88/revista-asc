@@ -4,10 +4,15 @@ import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import React, { useEffect } from 'react';
 import { useColorScheme} from 'react-native';
-import {  signIn, type SignInInput } from 'aws-amplify/auth';
-import { TextFieldOptionsType } from '@aws-amplify/ui-react-native/dist/Authenticator/hooks';
-import { Authenticator } from '@aws-amplify/ui-react-native';
-import { Checkbox, Radio } from '@aws-amplify/ui-react-native/dist/primitives';
+import {  signIn, signOut, type SignInInput } from 'aws-amplify/auth';
+
+import {
+  useAuthenticator,
+  Authenticator,
+
+} from "@aws-amplify/ui-react-native";
+
+import { Button, Menu,  PaperProvider } from 'react-native-paper';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -24,6 +29,7 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
   });
+  
   
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
@@ -43,14 +49,13 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
-
-
-
-
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const [visible, setVisible] = React.useState(false);
+
 
   return (
+    <PaperProvider>
     <Authenticator.Provider>
       <Authenticator
       components={{
@@ -124,25 +129,41 @@ function RootLayoutNav() {
         }}>
 
     
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={DefaultTheme}>
       <Stack
         initialRouteName='/'
         
         screenOptions={{
           headerStyle: {
-            backgroundColor: '#fff',
+            backgroundColor: 'black',
           },
-          title: "Trading en la bolsaaa",
-          headerTintColor: '#000000',
+          title: "Trading en la bolsa",
+          headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
           },
+          headerRight: () => {
+            return (
+              <Menu
+                visible={visible}
+                onDismiss={()=>setVisible(false)}
+                anchor={<Button onPress={()=>setVisible(true)}> <FontAwesome name="cog" size={24} color="white" /></Button>}>
+                <Menu.Item onPress={() => {}} title="Ajustes" />
+                
+                  
+  
+                
+              </Menu>
+            )
+          }
         }}
       >
+        
       </Stack>
       </ThemeProvider>
     </Authenticator>
     </Authenticator.Provider>
+    </PaperProvider>
       
     
   );

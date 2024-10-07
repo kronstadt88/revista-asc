@@ -44,6 +44,7 @@ export const getArticles = async (articlePair) => {
 };
 
 export const postArticle = async (image = "", text, pair) => {
+  
   try {
     const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
     const restOperation = post({
@@ -75,7 +76,6 @@ export const getUser = async () => {
     const idToken = session.tokens?.idToken?.toString();
     const restOperation = get({
       apiName: "ascpi",
-      //path: `/users/${idToken}`,
       path: `/users/${cognitoUserId}`,
       options: {
         headers: {
@@ -83,9 +83,9 @@ export const getUser = async () => {
         },
       },
     });
-    const response = await restOperation.response;
-    console.log("GET call succeeded: ", response);
-    return response;
+    const { body } = await restOperation.response;
+    const json = await body.json();
+    return json;
   } catch (e) {
     console.log(e);
   }
@@ -169,17 +169,16 @@ export const putUser = async (subscription) => {
   }
 };
 
-export const deleteArticle = async (articlePair) => {
+export const deleteArticle = async (article) => {
   try {
     const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
     const restOperation = del({
       apiName: "ascpi",
-      path: `/articles?pair=${articlePair}`,
+      path: `/articles/${article.id}`,
       options: {
         headers: {
           Authorization: idToken,
-        },
-        body: {},
+        }
       },
     });
     const response = await restOperation.response;

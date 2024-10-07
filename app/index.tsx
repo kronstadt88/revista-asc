@@ -1,12 +1,10 @@
 import {
   StyleSheet,
-  Pressable,
-  Text,
+  
   View,
-  TouchableOpacity,
 } from "react-native";
-import { Link, router } from "expo-router";
-import { PaperProvider, MD3DarkTheme as DefaultTheme, } from "react-native-paper";
+import {  router } from "expo-router";
+import { PaperProvider } from "react-native-paper";
 import { Button } from "react-native-paper";
 import {
   useAuthenticator,
@@ -14,30 +12,39 @@ import {
   withAuthenticator,
 } from "@aws-amplify/ui-react-native";
 
-
 import { Amplify } from "aws-amplify";
 import awsconfig from "../src/amplifyconfiguration.json";
 
-import { signIn, type SignInInput } from "aws-amplify/auth";
-import { DarkTheme } from "@react-navigation/native";
+
 Amplify.configure(awsconfig);
+import { useEffect } from "react";
+import { getUser } from "../services";
+import {save } from '../services/secureStore'
+
 
 function SignOutButton() {
   const { signOut } = useAuthenticator();
   return <Button onPress={signOut}>Sign Out </Button>;
 }
 
-const theme = {
-  ...DarkTheme,
-  // Specify custom property
-  myOwnProperty: true,
-  // Specify custom property in nested object
-  
-};
-
 function IndexScreen() {
+
+  async function getUserData(){
+    let user:any = await getUser();
+    
+    await save("user", user.Items[0].id);
+    await save("sub", user.Items[0].subscription);
+    
+    
+  }
+
+  useEffect(()=>{
+    getUserData()
+  },[])
+ 
   return (
-    <PaperProvider theme={theme}>
+    
+    <PaperProvider>
       <View style={styles.container}>
         <Button
           style={styles.button}
@@ -45,6 +52,13 @@ function IndexScreen() {
           onPress={() => router.push("/payment")}
         >
           Payment
+        </Button>
+        <Button
+          style={styles.button}
+          mode="contained"
+          onPress={() => router.push("/checkout/forex")}
+        >
+          Checkout
         </Button>
 
         <SignOutButton />
@@ -66,6 +80,7 @@ function IndexScreen() {
         </Button>
       </View>
     </PaperProvider>
+    
   );
 }
 

@@ -143,6 +143,55 @@ export const handler = async (event, context) => {
         );
         article = `Put item ${event.pathParameters.proxy}`;
     } 
+
+    if (event.resource === "/articles/{proxy+}" && event.httpMethod === "DELETE") {
+
+          
+          try{
+            /*articleToDelete = await dynamo.send(
+              new GetCommand({
+                TableName: tableName,
+                Key: {
+                  id: JSON.parse(event.pathParameters.proxy).toString(),
+                },
+              })
+            );
+
+            let s3reference = articleToDelete.Items[0].image;
+            let params = {  Bucket: 'your bucket', Key: s3reference };
+
+            deleteResult = await s3.upload(params).promise();
+
+            */
+            
+
+
+            article = await dynamo.send(
+              new DeleteCommand({
+                TableName: tableName,
+                Key: {
+                  id: event.pathParameters.proxy.toString(),
+                },
+                
+              })
+            );
+            article = `Deleted item ${event.pathParameters.proxy} and deleteResult`;
+            
+      
+          }catch(e){
+            return {
+              isBase64Encoded: true,
+              statusCode: 200,
+              headers: { "Access-Control-Allow-Origin": "*" },
+              body: JSON.stringify(e),
+            };
+          }
+          
+
+      
+        
+    } 
+
   }catch(e){
     return {
       isBase64Encoded: true,

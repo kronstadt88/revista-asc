@@ -5,9 +5,8 @@ import {
   Card,
   Text,
   TextInput,
-  ActivityIndicator,
-  MD2Colors,
-  PaperProvider
+  Snackbar
+  
 } from "react-native-paper";
 import { withAuthenticator } from "@aws-amplify/ui-react-native";
 
@@ -17,10 +16,11 @@ import { mediumTime } from "../../utils/utils";
 import { useEffect, useState } from "react";
 
 import {
-  getArticle,
+  
   getArticles,
   putArticle,
   postArticle,
+  deleteArticle,
 } from "../../services";
 
 function Article() {
@@ -38,7 +38,7 @@ function Article() {
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
+    
     if (status !== "granted") {
       // If permission is denied, show an alert
       Alert.alert(
@@ -47,14 +47,21 @@ function Article() {
              roll permission to upload images.`
       );
     } else {
-      // Launch the image library and get
-      // the selected image
-      const result: any = await ImagePicker.launchImageLibraryAsync();
+      
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        base64: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+      
 
       if (!result.canceled) {
         // If an image is selected (not cancelled),
         // update the file state variable
-        setFile(result.uri);
+        setFile(result.assets[0]);
+        
 
         // Clear any previous errors
         setError(null);
@@ -71,21 +78,25 @@ function Article() {
     await putArticle(
       editMode.selected,
       editMode.selected.text,
-      file,
+      file.base64,
       createdAt,
       pair
     );
     await fetchArticles().then((articlesPromise) => {
       setArticlesArray(articlesPromise.Items);
+      console.log(articlesPromise)
     });
+    setFile("");
     setEditMode({ mode: false, selected: "" });
   };
 
-  const postArticleCallback = async (image: any) => {
-    await postArticle(file, addText, item.id);
+  const postArticleCallback = async () => {
+    
+    await postArticle(file.base64, addText, item.id);
     await fetchArticles().then((articlesPromise) => {
       setArticlesArray(articlesPromise.Items);
     });
+    setFile("");
     setAddMode(false);
   };
 
@@ -99,14 +110,16 @@ function Article() {
 
   
     return (
+
+      
       <ScrollView style={styles.container}>
-        <Card>
-          <Card.Title title="Forex" subtitle={item.id} />
+        <Card style={styles.cardStyle}>
+          <Card.Title title="Forex" subtitle={item.id}  style={styles.title}/>
         </Card>
         {editMode.mode && (
           <>
             <View style={styles.articleContainer}>
-              <Card>
+              <Card style={styles.cardStyle}>
                 <Card.Title title="Editando artículo" />
                 <TextInput
                   label="Texto para el artículo"
@@ -121,12 +134,12 @@ function Article() {
                   }
                 />
                 <Image
-                  source={{ uri: editMode.selected.image }}
+                  source={{ uri: file?.uri }}
                   style={styles.image}
                   resizeMode="contain"
                 />
                 <Button
-                  style={styles.button}
+                  
                   mode="contained"
                   onPress={() => pickImage()}
                 >
@@ -158,7 +171,7 @@ function Article() {
         {addMode && (
           <>
             <View style={styles.articleContainer}>
-              <Card>
+              <Card style={styles.cardStyle}>
                 <Card.Title title="Añadiendo artículo" />
                 <TextInput
                   label="Texto del artículo"
@@ -168,7 +181,6 @@ function Article() {
                   onChangeText={(text: any) => setAddText(text)}
                 />
                 <Button
-                  style={styles.button}
                   mode="contained"
                   onPress={() => pickImage()}
                 >
@@ -179,20 +191,19 @@ function Article() {
                   // Display the selected image
 
                   <Image
-                    source={{ uri: file }}
+                    source={{ uri: file.uri }}
                     style={styles.image}
                     resizeMode="contain"
                   />
                 ) : (
-                  // Display an error message if there's
-                  // an error or no image selected
+                  
                   <Text style={styles.errorText}>{error}</Text>
                 )}
                 <Card.Actions>
                   <Button onPress={() => setAddMode(!addMode)}>
                     Cancelar{" "}
                   </Button>
-                  <Button onPress={() => postArticleCallback("")}>
+                  <Button onPress={() => postArticleCallback()}>
                     Guardar
                   </Button>
                 </Card.Actions>
@@ -215,7 +226,9 @@ function Article() {
               return (
                 <View style={styles.articleContainer} key={index}>
                   <Card style={styles.cardStyle}>
+                  <Card.Cover style={styles.image} source={{ uri: article.image }} resizeMode="contain" />
                     <Card.Title
+                      style={styles.articleText}
                       title={item.id}
                       subtitle={mediumTime.format(new Date(article.created_at))}
                     />
@@ -224,16 +237,13 @@ function Article() {
                         <Text style={styles.articleText} variant="bodyMedium">
                           {article.text}
                         </Text>
-                        <Image
-                          source={{ uri: article.image }}
-                          style={styles.image}
-                          resizeMode="contain"
-                        />
+                        
                       </View>
                     </Card.Content>
 
                     <Card.Actions>
                       <Button
+                        mode="contained"
                         onPress={() =>
                           setEditMode({
                             mode: !editMode.mode,
@@ -242,6 +252,15 @@ function Article() {
                         }
                       >
                         Editar
+                      </Button>
+                      <Button
+                        mode="contained"
+                        onPress={() =>
+                          
+                          deleteArticle(article)
+                        }
+                      >
+                        Borrar [WIP]
                       </Button>
                     </Card.Actions>
                   </Card>
@@ -259,9 +278,15 @@ export default withAuthenticator(Article);
 
 const styles = StyleSheet.create({
   container: {
+    padding: 20,
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#e5dedd",
     alignContent: "center",
+  },
+  title:{
+    width: "80%",
+    borderRadius: 0,
+    color: 'red'
   },
   addArticleButton: {
     margin: 30,
@@ -271,11 +296,12 @@ const styles = StyleSheet.create({
     paddingLeft: 40,
   },
   articleContainer: {
-    margin: 30,
+    
   },
   cardContentStyle: {
     height: 100,
     marginBottom: 200,
+    
   },
 
   cardContentViewStyle: {
@@ -283,9 +309,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   cardStyle: {
-    backgroundColor: "white",
+    backgroundColor: '#ffffff',
+    marginBottom: 40,
   },
   articleText: {
+    color:'black',
     marginTop: 20,
   },
 
@@ -305,7 +333,9 @@ const styles = StyleSheet.create({
   },
   image: {
     height: 200,
-    borderRadius: 8,
+    
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0
   },
   errorText: {
     color: "red",

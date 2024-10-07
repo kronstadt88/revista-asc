@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
-  TextInput,
   View,
   Text,
   Alert,
@@ -10,16 +9,13 @@ import {
 } from "react-native";
 
 import {
-  CardField,
-  CardForm,
   StripeProvider,
   useStripe,
 } from "@stripe/stripe-react-native";
-import { Snackbar } from 'react-native-paper';
+
 
 import { withAuthenticator } from "@aws-amplify/ui-react-native";
 import { paymentIntentRequest } from "../services/index";
-import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-input";
 
 const PaymentScreen = () => {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
@@ -34,12 +30,13 @@ const PaymentScreen = () => {
     try {
       const response: any = await paymentIntentRequest(123, "usd");
       
-      const { paymentIntent, ephemeralKey, customerId } = await response.body.json();
+      const { paymentIntent, ephemeralKey, customerId, sub } = await response.body.json();
       
     return {
       paymentIntent: paymentIntent,
       ephemeralKey,
       customer: customerId,
+      sub
     };
 
 
@@ -53,14 +50,14 @@ const PaymentScreen = () => {
   const initializePaymentSheet = async () => {
     
     try {
-      const { paymentIntent, ephemeralKey, customer } : any= await fetchPaymentSheetParams();
-
+      const { paymentIntent, ephemeralKey, customer, sub } : any= await fetchPaymentSheetParams();
 
       const { error } = await initPaymentSheet({
         merchantDisplayName: "Merchant",
         customerId: customer,
         customerEphemeralKeySecret: ephemeralKey,
-        paymentIntentClientSecret: paymentIntent,
+        //paymentIntentClientSecret: paymentIntent,
+        paymentIntentClientSecret: sub.latest_invoice.payment_intent.client_secret,
       });
 
       if (!error) {

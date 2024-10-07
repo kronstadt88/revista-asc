@@ -9,6 +9,10 @@ const products = {
   forex: "prod_QxvSkMMmnRC1pQ"
 }
 
+const prices = {
+  index: "price_1Q5zbsRvdA3t4SZBkKBy7Qjl"
+}
+
 
 import Stripe from "stripe";
 const stripe = new Stripe(
@@ -53,13 +57,76 @@ export const handler = async (event, context) => {
       },
     });
 
+    const subscription = await stripe.subscriptions.create({
+      customer: customer.id,
+      items: [{
+        price: "price_1Q5zbsRvdA3t4SZBkKBy7Qjl",
+      }],
+      payment_behavior: 'default_incomplete',
+      payment_settings: { save_default_payment_method: 'on_subscription' },
+      expand: ['latest_invoice.payment_intent'],
+      
+    });
+
+    
+
+    /*try{
+      const subscription = await stripe.subscriptions.create({
+        customer: customer.id,
+        items: [{
+          price: price_1Q5zbsRvdA3t4SZBkKBy7Qjl,
+        }],
+        
+      });
+    } catch(e){
+      return {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "*",
+        },
+        body: JSON.stringify(e),
+      };
+    }*/
+
+    
+
+    
+
+    /*const session = await stripe.checkout.sessions.create({
+      line_items: [
+        
+        {
+          price: price_1Q5zbsRvdA3t4SZBkKBy7Qjl,
+          quantity: 1,
+        },
+      ],
+      mode: 'subscription',
+      ui_mode: 'embedded',
+      return_url: 'https://example.com/return',
+    });
+
+    const subscription = await stripe.subscriptions.create({
+      customer: customer.id,
+      items: [{
+        price: price_1Q5zbsRvdA3t4SZBkKBy7Qjl,
+      }],
+      payment_behavior: 'default_incomplete',
+      payment_settings: { save_default_payment_method: 'on_subscription' },
+      expand: ['latest_invoice.payment_intent'],
+    });
+
+    console.log(subscription)
+    */
+
     let intentToReturn = {
       paymentIntent: paymentIntent.client_secret,
+      //session: session,
+      sub: subscription ,
       ephemeralKey: ephemeralKey.secret,
       customer: customer.id,
       publishableKey: publishableKey
     }
-  
     return {
 
 

@@ -17,6 +17,8 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 import { FontAwesome } from "@expo/vector-icons";
+import { Button } from 'react-native-paper';
+
 
 const data = [
   {
@@ -73,6 +75,7 @@ const AnimatedAcordion = () => (
 const AccordionItem = ({title, description}) => {
   const shareValue = useSharedValue(0);
   const [bodySectionHeight, setBodySectionHeight] = useState(0);
+  const [subscribed, setSubscribed] = useState("")
 
   const bodyHeight = useAnimatedStyle(() => ({
     height: interpolate(shareValue.value, [0, 1], [0, bodySectionHeight])
@@ -89,6 +92,7 @@ const AccordionItem = ({title, description}) => {
   });
 
   const toggleButton = () => {
+
     if (shareValue.value === 0) {
       shareValue.value = withTiming(1, {
         duration: 500,
@@ -108,11 +112,25 @@ const AccordionItem = ({title, description}) => {
         activeOpacity={0.7}
         style={styles.btnStyle}
         onPress={toggleButton}>
-        <Text style={styles.title}>{title}</Text>
-        <Animated.View style={iconStyle}>
-        <FontAwesome name="chevron-down" size={24} color="black" />
-    
-        </Animated.View>
+        <Text style={styles.title}>{title} </Text>
+
+        {!subscribed &&
+          <Link href={`/checkout/${title.toLowerCase()}`} >
+            <FontAwesome name="shopping-cart" size={34} color="black" />
+            </Link>
+          
+            
+        }
+        {subscribed &&
+        
+          <Animated.View style={iconStyle}>
+          <FontAwesome name="chevron-down" size={24} color="black" />
+          
+          
+          </Animated.View>
+        }
+        
+      
       </TouchableOpacity>
 
         <Animated.View
