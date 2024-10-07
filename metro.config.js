@@ -1,16 +1,7 @@
-const { getDefaultConfig } = require("metro-config");
-const blacklist = require('metro-config/src/defaults/exclusionList');
+const { getDefaultConfig } = require('expo/metro-config');
 
-module.exports = (async () => {
-  const {
-    resolver: { sourceExts }
-  } = await getDefaultConfig(__dirname);
-  return {
-    resolver: {
-      
-      blacklistRE: blacklist([/amplify\/#current-cloud-backend\/.*/]),
-      sourceExts: [...sourceExts, "cjs", "mjs"]
-    }
-  };
-})();
+/** @type {import('expo/metro-config').MetroConfig} */
+const config = getDefaultConfig(__dirname);
 
+
+module.exports = config;
