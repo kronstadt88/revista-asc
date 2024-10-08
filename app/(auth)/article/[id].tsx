@@ -12,7 +12,7 @@ import { withAuthenticator } from "@aws-amplify/ui-react-native";
 
 import * as ImagePicker from "expo-image-picker";
 
-import { mediumTime } from "../../utils/utils";
+import { mediumTime } from "../../../utils/utils";
 import { useEffect, useState } from "react";
 
 import {
@@ -21,7 +21,7 @@ import {
   putArticle,
   postArticle,
   deleteArticle,
-} from "../../services";
+} from "../../../services";
 
 function Article() {
   const [editMode, setEditMode] = useState<any>({ mode: false, selected: "" });

@@ -13,7 +13,7 @@ import {
 } from "@aws-amplify/ui-react-native";
 
 import { Amplify } from "aws-amplify";
-import awsconfig from "../src/amplifyconfiguration.json";
+import awsconfig from "../amplifyconfiguration.json";
 
 
 Amplify.configure(awsconfig);
@@ -46,19 +46,21 @@ function IndexScreen() {
     
     <PaperProvider>
       <View style={styles.container}>
+        
         <Button
           style={styles.button}
           mode="contained"
-          onPress={() => router.push("/payment")}
-        >
-          Payment
-        </Button>
-        <Button
-          style={styles.button}
-          mode="contained"
-          onPress={() => router.push("/checkout/forex")}
+          onPress={() => router.push("/checkout")}
         >
           Checkout
+        </Button>
+
+        <Button
+          style={styles.button}
+          mode="contained"
+          onPress={() => router.push("/side/payment")}
+        >
+          Payment
         </Button>
 
         <SignOutButton />

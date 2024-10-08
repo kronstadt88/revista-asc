@@ -15,17 +15,13 @@ import {
 
 
 import { withAuthenticator } from "@aws-amplify/ui-react-native";
-import { paymentIntentRequest } from "../services/index";
+import { paymentIntentRequest } from "../../services/index";
 
 const PaymentScreen = () => {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [loading, setLoading] = useState(false);
-  const [items, setItems] = useState([
-    { id: "1", name: "Alerta judiada", price: 123 },
-  ]);
 
   const fetchPaymentSheetParams = async () => {
-    
 
     try {
       const response: any = await paymentIntentRequest(123, "usd");

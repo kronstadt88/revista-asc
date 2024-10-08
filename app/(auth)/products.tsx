@@ -1,10 +1,10 @@
 import { StyleSheet, View } from "react-native";
-import AnimatedAcordion from "../components/accordion";
+import AnimatedAcordion from "../../components/accordion";
 import { PaperProvider } from 'react-native-paper';
 import {
   withAuthenticator,
 } from '@aws-amplify/ui-react-native';
-import {save, getValueFor} from '../services/secureStore';
+
 
 
 function Products() {

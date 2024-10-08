@@ -46,17 +46,7 @@ export const handler = async (event, context) => {
   );
 
   try{
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(requestJSON.amount * 100),
-      currency: "eur",
-      customer: customer.id,
-      // In the latest version of the API, specifying the `automatic_payment_methods` parameter
-      // is optional because Stripe enables its functionality by default.
-      automatic_payment_methods: {
-        enabled: true,
-      },
-    });
-
+    
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [{
@@ -68,61 +58,10 @@ export const handler = async (event, context) => {
       
     });
 
-    
-
-    /*try{
-      const subscription = await stripe.subscriptions.create({
-        customer: customer.id,
-        items: [{
-          price: price_1Q5zbsRvdA3t4SZBkKBy7Qjl,
-        }],
-        
-      });
-    } catch(e){
-      return {
-        statusCode: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Headers": "*",
-        },
-        body: JSON.stringify(e),
-      };
-    }*/
-
-    
-
-    
-
-    /*const session = await stripe.checkout.sessions.create({
-      line_items: [
-        
-        {
-          price: price_1Q5zbsRvdA3t4SZBkKBy7Qjl,
-          quantity: 1,
-        },
-      ],
-      mode: 'subscription',
-      ui_mode: 'embedded',
-      return_url: 'https://example.com/return',
-    });
-
-    const subscription = await stripe.subscriptions.create({
-      customer: customer.id,
-      items: [{
-        price: price_1Q5zbsRvdA3t4SZBkKBy7Qjl,
-      }],
-      payment_behavior: 'default_incomplete',
-      payment_settings: { save_default_payment_method: 'on_subscription' },
-      expand: ['latest_invoice.payment_intent'],
-    });
-
-    console.log(subscription)
-    */
-
     let intentToReturn = {
-      paymentIntent: paymentIntent.client_secret,
-      //session: session,
-      sub: subscription ,
+      
+      
+      paymentIntent: subscription.latest_invoice.payment_intent.client_secret,
       ephemeralKey: ephemeralKey.secret,
       customer: customer.id,
       publishableKey: publishableKey

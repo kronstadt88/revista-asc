@@ -114,21 +114,14 @@ const AccordionItem = ({title, description}) => {
         onPress={toggleButton}>
         <Text style={styles.title}>{title} </Text>
 
-        {!subscribed &&
-          <Link href={`/checkout/${title.toLowerCase()}`} >
-            <FontAwesome name="shopping-cart" size={34} color="black" />
-            </Link>
-          
-            
-        }
-        {subscribed &&
+        
+        
         
           <Animated.View style={iconStyle}>
           <FontAwesome name="chevron-down" size={24} color="black" />
           
           
           </Animated.View>
-        }
         
       
       </TouchableOpacity>

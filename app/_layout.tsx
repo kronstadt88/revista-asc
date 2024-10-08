@@ -7,7 +7,6 @@ import { useColorScheme} from 'react-native';
 import {  signIn, signOut, type SignInInput } from 'aws-amplify/auth';
 
 import {
-  useAuthenticator,
   Authenticator,
 
 } from "@aws-amplify/ui-react-native";
@@ -50,10 +49,7 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-  const [visible, setVisible] = React.useState(false);
-
-
+  
   return (
     <PaperProvider>
     <Authenticator.Provider>
@@ -142,20 +138,7 @@ function RootLayoutNav() {
           headerTitleStyle: {
             fontWeight: 'bold',
           },
-          headerRight: () => {
-            return (
-              <Menu
-                visible={visible}
-                onDismiss={()=>setVisible(false)}
-                anchor={<Button onPress={()=>setVisible(true)}> <FontAwesome name="cog" size={24} color="white" /></Button>}>
-                <Menu.Item onPress={() => {}} title="Ajustes" />
-                
-                  
-  
-                
-              </Menu>
-            )
-          }
+          
         }}
       >
         

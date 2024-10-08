@@ -72,6 +72,7 @@ export const postArticle = async (image = "", text, pair) => {
 export const getUser = async () => {
   try {
     const session = await fetchAuthSession();
+
     const cognitoUserId = session.userSub;
     const idToken = session.tokens?.idToken?.toString();
     const restOperation = get({
@@ -91,7 +92,7 @@ export const getUser = async () => {
   }
 };
 
-export const postUser = async (subscription) => {
+export const postUser = async (subscription = "") => {
   try {
     const session = await fetchAuthSession();
     const cognitoUserId = session.userSub;
