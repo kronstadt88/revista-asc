@@ -79,6 +79,11 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "getSubscription": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "getUsers": {
       "build": true,
       "dependsOn": [

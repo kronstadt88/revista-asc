@@ -211,7 +211,7 @@ export const deleteUser = async (articlePair) => {
   }
 };
 
-export const paymentIntentRequest = async (amount, currency) => {
+export const paymentIntentRequest = async (subscription) => {
   
 
   try {
@@ -219,7 +219,7 @@ export const paymentIntentRequest = async (amount, currency) => {
     const cognitoUserId = session.userSub;
     const idToken = session.tokens?.idToken?.toString();
     const user = {name: session.tokens.idToken.payload["cognito:username"], email: session.tokens.idToken.payload["email"], userId: cognitoUserId }
-    const bodyy = { currency: currency, amount: amount, user };
+    const bodyy = { subscription, user };
 
     const restOperation = post({
       apiName: "ascpi",

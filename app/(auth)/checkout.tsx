@@ -16,13 +16,16 @@ import {
   StripeProvider,
   useStripe,
 } from "@stripe/stripe-react-native";
-import { paymentIntentRequest } from "../../services";
+import { paymentIntentRequest, postUser } from "../../services";
+import { getValueFor, save } from "../../services/secureStore";
 
 function Checkout() {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
-  const [loading, setLoading] = useState(false);
-
   const [items, setItems] = useState<Array<any>>([]);
+  const [subscribed, setSubscribed] = useState();
+  const [allProducts, setAllProducts] = useState(products);
+  const [availableProducts, setAvailableProducts] = useState<any>()
+  
 
   let cartTotal = 0;
 
@@ -30,6 +33,42 @@ function Checkout() {
     let itemsToCalculate = items.map(item=>item.price)
     cartTotal= itemsToCalculate.reduce((currentValue, acc)=> currentValue + acc, 0)
   }, [items])
+
+
+  useMemo(async ()=>{
+    let subscription:any = await getValueFor("sub");
+    setSubscribed(subscription);
+
+    let array = products.filter(product=>{
+      return subscription.includes(product.id)
+      
+    })
+    
+    setAvailableProducts(array)
+
+  }, [])
+
+  const setBaseSubscription = async () =>{
+    let subscription:any = await getValueFor("sub");
+    setSubscribed(subscription);
+    console.log("SET BASE")
+    console.log(allProducts)
+
+    console.log(subscription)
+    
+    let array = allProducts.filter(product=> subscription.includes(product.id))
+
+    console.log("avaiie", array)
+
+    
+  }
+
+
+  useEffect(()=>{
+    console.log("useEffect ")
+    
+    setBaseSubscription();
+  }, )
 
   const addItemToTable = (product: any) => {
     if(product.id === "all"){
@@ -45,8 +84,10 @@ function Checkout() {
   };
 
   const fetchPaymentSheetParams = async () => {
+    
     try {
-      const response: any = await paymentIntentRequest(10, "eur");
+      let sub = items.map(product=>product.id)
+      const response: any = await paymentIntentRequest(sub);
       const { paymentIntent, ephemeralKey, customerId } =
         await response.body.json();
 
@@ -72,21 +113,26 @@ function Checkout() {
 
         paymentIntentClientSecret: paymentIntent,
       });
-
-      if (!error) {
-        setLoading(true);
-      }
     } catch (e) {
       console.log("error" + e);
     }
   };
 
   const openPaymentSheet = async () => {
+    
+    
+      
     const { error } = await presentPaymentSheet();
     if (error) {
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
+      let currentSub: any = await getValueFor("sub");
+      let addToSub = items.map(product=>product.id).join(",");
+      let updatedSub = currentSub.concat(addToSub).concat(",")
+      
       Alert.alert("Success", "Your order is confirmed!");
+      await save("sub", updatedSub)
+      await postUser(updatedSub)
     }
   };
 
@@ -121,6 +167,7 @@ function Checkout() {
                     textStyle={{ color: "black" }}
                   >
                     <Text>{selectedProducts.description}</Text>
+                    
                   </DataTable.Cell>
                   <DataTable.Cell textStyle={{ color: "black" }}>
                     <Text>{selectedProducts.price} €</Text> 
@@ -145,14 +192,14 @@ function Checkout() {
         </View>
         <View style={s.infoContainerChip}>
           <Text style={s.cartTitle}>Subscripciones disponibles</Text>
-          {products.map((product) => {
+          {allProducts.map((filteredProduct) => {
             return (
               <Chip
-                key={product.key}
+                key={filteredProduct.key}
                 style={s.chip}
-                onPress={() => addItemToTable(product)}
+                onPress={() => addItemToTable(filteredProduct)}
               >
-                {product.name}
+                {filteredProduct.name}
               </Chip>
             );
           })}

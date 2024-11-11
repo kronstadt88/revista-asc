@@ -30,7 +30,8 @@
           "deploymentBucketName": "amplify-revistaasc-dev-141602-deployment",
           "s3Key": "amplify-builds/paymentIntent-4839347841595131644b-build.zip"
         },
-        "pairs": {}
+        "pairs": {},
+        "getSubscription": {}
       },
       "storage": {
         "users": {}

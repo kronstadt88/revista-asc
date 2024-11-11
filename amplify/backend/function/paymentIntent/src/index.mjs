@@ -6,11 +6,18 @@
 
 const products = {
   index: "prod_QxvSDb95tgJY0D",
-  forex: "prod_QxvSkMMmnRC1pQ"
+  forex: "prod_QxvSkMMmnRC1pQ",
+  commodities: "",
+  crypto: "",
+  bonds: "prod_RCKOgaZ4G3QcjU"
 }
 
 const prices = {
-  index: "price_1Q5zbsRvdA3t4SZBkKBy7Qjl"
+  index: "price_1Q5zbsRvdA3t4SZBkKBy7Qjl",
+  forex: "price_1Q5zbJRvdA3t4SZBB1mIAXEV",
+  commodities: "price_1QJvkQRvdA3t4SZBWuXB3kme",
+  bonds: "price_1QJvjqRvdA3t4SZBX7hEXOq0",
+  crypto: "price_1QJvhVRvdA3t4SZBU2fwasUt",
 }
 
 
@@ -27,6 +34,10 @@ export const handler = async (event, context) => {
   let requestJSON = JSON.parse(event.body);
   let customer;
 
+
+  let array = requestJSON.subscription.map(product=>{
+    return {price: prices[product]}
+  })
   
   let existingCustomers = await stripe.customers.list({email : requestJSON.user.email});
   if(existingCustomers.data.length){
@@ -49,9 +60,7 @@ export const handler = async (event, context) => {
     
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
-      items: [{
-        price: "price_1Q5zbsRvdA3t4SZBkKBy7Qjl",
-      }],
+      items: array,
       payment_behavior: 'default_incomplete',
       payment_settings: { save_default_payment_method: 'on_subscription' },
       expand: ['latest_invoice.payment_intent'],
@@ -60,7 +69,7 @@ export const handler = async (event, context) => {
 
     let intentToReturn = {
       
-      
+      array: array,
       paymentIntent: subscription.latest_invoice.payment_intent.client_secret,
       ephemeralKey: ephemeralKey.secret,
       customer: customer.id,

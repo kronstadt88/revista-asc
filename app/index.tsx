@@ -1,16 +1,12 @@
 import {
   StyleSheet,
-  
   View,
+  ImageBackground
 } from "react-native";
 import {  router } from "expo-router";
-import { PaperProvider } from "react-native-paper";
-import { Button } from "react-native-paper";
-import {
-  useAuthenticator,
-  Authenticator,
-  withAuthenticator,
-} from "@aws-amplify/ui-react-native";
+import { PaperProvider, Button} from "react-native-paper";
+
+import { useAuthenticator, withAuthenticator } from "@aws-amplify/ui-react-native";
 
 import { Amplify } from "aws-amplify";
 import awsconfig from "../amplifyconfiguration.json";
@@ -19,13 +15,7 @@ import awsconfig from "../amplifyconfiguration.json";
 Amplify.configure(awsconfig);
 import { useEffect } from "react";
 import { getUser } from "../services";
-import {save } from '../services/secureStore'
-
-
-function SignOutButton() {
-  const { signOut } = useAuthenticator();
-  return <Button onPress={signOut}>Sign Out </Button>;
-}
+import {save, getValueFor } from '../services/secureStore'
 
 function IndexScreen() {
 
@@ -34,54 +24,34 @@ function IndexScreen() {
     
     await save("user", user.Items[0].id);
     await save("sub", user.Items[0].subscription);
-    
+    console.log("sub", await getValueFor("sub"))
     
   }
 
   useEffect(()=>{
-    getUserData()
+    getUserData();
+    
   },[])
  
   return (
     
-    <PaperProvider>
       <View style={styles.container}>
         
-        <Button
-          style={styles.button}
-          mode="contained"
-          onPress={() => router.push("/checkout")}
-        >
-          Checkout
-        </Button>
+        <ImageBackground source={require('../assets/images/chart.jpg')} resizeMode="cover" style={styles.image}>
+          <Button
+            style={styles.button}
+            mode="contained"
+            onPress={() => router.push("/products")}
+          >
+            Empezar
+          </Button>
+        </ImageBackground>
 
-        <Button
-          style={styles.button}
-          mode="contained"
-          onPress={() => router.push("/side/payment")}
-        >
-          Payment
-        </Button>
 
-        <SignOutButton />
+        
 
-        <Button
-          style={styles.button}
-          mode="contained"
-          onPress={() => router.push("/products")}
-        >
-          Open Products
-        </Button>
-
-        <Button
-          style={styles.button}
-          mode="contained"
-          onPress={() => router.push("/article/eurusd")}
-        >
-          Open Articles
-        </Button>
+        
       </View>
-    </PaperProvider>
     
   );
 }
@@ -93,7 +63,12 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flex: 1,
   },
+  image: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   button: {
+    backgroundColor: "white",
     margin: 30,
     paddingTop: 10,
     paddingBottom: 10,

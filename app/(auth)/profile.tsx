@@ -3,17 +3,26 @@ import {
   useAuthenticator,
   withAuthenticator,
 } from '@aws-amplify/ui-react-native';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "react-native-paper";
+import { getValueFor } from "../../services/secureStore";
 
 
 
 function Profile() {
 
   const { user, signOut } = useAuthenticator((context) => [context.user]);
+  const [sub, setSub] = useState();
 
+  const setSubscription = async()=>{
+    let subscriptions = await getValueFor("sub");
+    setSub(sub)
+  }
+  
   useEffect(()=>{
-    console.log("user", user)
+    console.log("user", user);
+    setSubscription();
+    
   })
 
 
@@ -24,6 +33,7 @@ function Profile() {
           <Button mode="contained" onPress={signOut}>Cerrar sesión</Button>
           <Text>My Subscription</Text>
           <Text>{user.userId}</Text>
+          
         </View>
       
     

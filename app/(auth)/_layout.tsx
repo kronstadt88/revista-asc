@@ -96,6 +96,7 @@ function RootLayoutNav() {
           <Tabs.Screen
             name="article/[id]"
             options={{
+              title: "Artículos",
               href: null,
             }}
           />
