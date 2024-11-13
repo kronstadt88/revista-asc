@@ -92,6 +92,50 @@ export const getUser = async () => {
   }
 };
 
+export const getSubscription = async () => {
+  try {
+    const session = await fetchAuthSession();
+    const idToken = session.tokens?.idToken?.toString();
+    
+    const restOperation = get({
+      apiName: "ascpi",
+      path: `/subscription?email=${session.tokens.idToken.payload["email"]}`,
+      options: {
+        headers: {
+          Authorization: idToken,
+        },
+      },
+    });
+    const { body } = await restOperation.response;
+    const json = await body.json();
+    return json;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const deleteSubscription = async (id) => {
+  try {
+    const session = await fetchAuthSession();
+    const idToken = session.tokens?.idToken?.toString();
+    
+    const restOperation = delete({
+      apiName: "ascpi",
+      path: `/subscription/${id}`,
+      options: {
+        headers: {
+          Authorization: idToken,
+        },
+      },
+    });
+    const { body } = await restOperation.response;
+    const json = await body.json();
+    return json;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 export const postUser = async (subscription = "") => {
   try {
     const session = await fetchAuthSession();
@@ -210,6 +254,11 @@ export const deleteUser = async (articlePair) => {
     console.log(e);
   }
 };
+
+
+
+
+
 
 export const paymentIntentRequest = async (subscription) => {
   

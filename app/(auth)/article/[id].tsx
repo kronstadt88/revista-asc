@@ -5,11 +5,8 @@ import {
   Card,
   Text,
   TextInput,
-  Snackbar
-  
-} from "react-native-paper";
+  } from "react-native-paper";
 import { withAuthenticator } from "@aws-amplify/ui-react-native";
-
 import * as ImagePicker from "expo-image-picker";
 
 import { mediumTime } from "../../../utils/utils";

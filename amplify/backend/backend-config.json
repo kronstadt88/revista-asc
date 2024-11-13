@@ -25,6 +25,36 @@
           ],
           "category": "function",
           "resourceName": "getUsers"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "getSubscription"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "getCustomers"
+        },
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "revistaasc2bed4ced"
+        },
+        {
+          "attributes": [
+            "ascusersGroupRole"
+          ],
+          "category": "auth",
+          "resourceName": "userPoolGroups"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -79,6 +109,11 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "getCustomers": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "getSubscription": {
       "build": true,
       "providerPlugin": "awscloudformation",
@@ -103,66 +138,16 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
-    "pairs": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    },
     "paymentIntent": {
       "build": true,
       "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
-    }
-  },
-  "parameters": {
-    "AMPLIFY_function_getArticle_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "getArticle"
-        }
-      ]
     },
-    "AMPLIFY_function_getArticle_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "getArticle"
-        }
-      ]
-    },
-    "AMPLIFY_function_getUsers_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "getUsers"
-        }
-      ]
-    },
-    "AMPLIFY_function_getUsers_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "getUsers"
-        }
-      ]
-    },
-    "AMPLIFY_function_paymentIntent_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "paymentIntent"
-        }
-      ]
-    },
-    "AMPLIFY_function_paymentIntent_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "paymentIntent"
-        }
-      ]
+    "presignup": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     }
   },
   "storage": {

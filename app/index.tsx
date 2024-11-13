@@ -13,25 +13,11 @@ import awsconfig from "../amplifyconfiguration.json";
 
 
 Amplify.configure(awsconfig);
-import { useEffect } from "react";
-import { getUser } from "../services";
-import {save, getValueFor } from '../services/secureStore'
+
+import { getSubscription } from "../services";
 
 function IndexScreen() {
-
-  async function getUserData(){
-    let user:any = await getUser();
-    
-    await save("user", user.Items[0].id);
-    await save("sub", user.Items[0].subscription);
-    console.log("sub", await getValueFor("sub"))
-    
-  }
-
-  useEffect(()=>{
-    getUserData();
-    
-  },[])
+  
  
   return (
     
@@ -45,6 +31,8 @@ function IndexScreen() {
           >
             Empezar
           </Button>
+
+          
         </ImageBackground>
 
 

@@ -3,15 +3,11 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import React, { useEffect } from 'react';
-import { useColorScheme} from 'react-native';
-import {  signIn, signOut, type SignInInput } from 'aws-amplify/auth';
+import {  signIn, type SignInInput } from 'aws-amplify/auth';
 
-import {
-  Authenticator,
+import { Authenticator } from "@aws-amplify/ui-react-native";
 
-} from "@aws-amplify/ui-react-native";
-
-import { Button, Menu,  PaperProvider } from 'react-native-paper';
+import { PaperProvider } from 'react-native-paper';
 
 export { ErrorBoundary } from 'expo-router';
 

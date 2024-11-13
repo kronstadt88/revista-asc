@@ -17,8 +17,8 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 import { FontAwesome } from "@expo/vector-icons";
-import { Button } from 'react-native-paper';
-import { getValueFor } from '../services/secureStore';
+import { getSubscription } from '../services';
+import { ActivityIndicator } from 'react-native-paper';
 
 
 const data = [
@@ -67,31 +67,48 @@ const data = [
   }
 ];
 
-const AnimatedAcordion = () => (
-  <View style={styles.containerStyle}>
-    <FlatList
-      data={data}
-      keyExtractor={item => item.id.toString()}
-      renderItem={({item}) => (
-        <AccordionItem title={item.title} code={item.code} description={item.description} />
-      )}
-    />
+const AnimatedAcordion = () => {
+
+  const [loading, setLoading] = useState(false);
+  const [userSub, setUserSub] = useState<any>([])
+
+  const getUserSubscription = async () =>{
+    setLoading(true);
+    let userSubscription: any = await getSubscription();
+    setLoading(false);
+    setUserSub(userSubscription.currentSubscriptions);
+  }
+  
+  useEffect(()=>{
+    getUserSubscription();
+  }, [])
+
+  return (
+    <View style={styles.containerStyle}>
+      {loading &&
+        <ActivityIndicator style={styles.spinner}  size="large" animating={true}  />
+      }
+      {!loading &&
+         <FlatList
+         data={data}
+         keyExtractor={item => item.id.toString()}
+         renderItem={({item}) => (
+           <AccordionItem title={item.title} code={item.code} description={item.description} sub={userSub}/>
+         )}
+       />
+      }
+   
     
   </View>
-);
+  )
+  
+  
+}
 
-const AccordionItem = ({title, code, description}) => {
+const AccordionItem = ({title, code, description, sub}) => {
   const shareValue = useSharedValue(0);
   const [bodySectionHeight, setBodySectionHeight] = useState(0);
-  const [subscribed, setSubscribed] = useState("")
   
-  const getSubscription = async () =>{
-    let subscription: any = await getValueFor("sub");
-    console.log("getSub")
-    console.log(subscription)
-    setSubscribed(subscription)
-  }
-
   const bodyHeight = useAnimatedStyle(() => ({
     height: interpolate(shareValue.value, [0, 1], [0, bodySectionHeight])
   }));
@@ -105,10 +122,6 @@ const AccordionItem = ({title, code, description}) => {
       ],
     };
   });
-
-  useEffect(()=>{
-    getSubscription();
-  }, [])
 
   const toggleButton = () => {
 
@@ -133,16 +146,15 @@ const AccordionItem = ({title, code, description}) => {
         >
         <Text style={styles.title}>{title} </Text>
           <Animated.View style={iconStyle}>
-            {subscribed.includes(code) &&
+            {sub.includes(code) &&
               <FontAwesome name="chevron-down" size={24} color="black" onPress={toggleButton}/>
             }
-            {!subscribed.includes(code) &&
-            <Link href="/(auth)/checkout">
-              <FontAwesome name="shopping-cart" size={30} color="black" />
-            </Link>
-              
+            {!sub.includes(code) &&
+              <FontAwesome name="shopping-cart" size={24} color="black" onPress={toggleButton}/>
             }
-          
+            {sub.includes("all") &&
+              <FontAwesome name="chevron-down" size={24} color="black" onPress={toggleButton}/>
+            }
           </Animated.View>
       </TouchableOpacity>
 
@@ -196,7 +208,9 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 10,
   },
-  
+  spinner:{
+    marginTop: 40
+  },
   descStyle: {
     overflow: 'hidden',
   },

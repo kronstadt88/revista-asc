@@ -47,12 +47,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "getSubscription",
+            "presignup",
             {
               "Fn::Join": [
                 "",
                 [
-                  "getSubscription",
+                  "presignup",
                   "-",
                   {
                     "Ref": "env"
@@ -89,12 +89,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "revistaascLambdaRole3bda8bbb",
+            "revistaascLambdaRolee69fb702",
             {
               "Fn::Join": [
                 "",
                 [
-                  "revistaascLambdaRole3bda8bbb",
+                  "revistaascLambdaRolee69fb702",
                   "-",
                   {
                     "Ref": "env"

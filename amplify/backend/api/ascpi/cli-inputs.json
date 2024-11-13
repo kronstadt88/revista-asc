@@ -39,6 +39,34 @@
           "delete"
         ]
       }
+    },
+    "/subscription": {
+      "name": "/subscription",
+      "lambdaFunction": "getSubscription",
+      "permissions": {
+        "setting": "private",
+        "auth": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ]
+      }
+    },
+    "/customers": {
+      "name": "/customers",
+      "lambdaFunction": "getCustomers",
+      "permissions": {
+        "groups": {
+          "ascusers": [
+            "create",
+            "read",
+            "update",
+            "delete"
+          ]
+        },
+        "setting": "private"
+      }
     }
   }
 }

@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { Button, DataTable, Chip } from "react-native-paper";
+import { Button, DataTable, Chip, ActivityIndicator } from "react-native-paper";
 import { products } from "../../constants/products";
 
 import {
@@ -16,15 +16,20 @@ import {
   StripeProvider,
   useStripe,
 } from "@stripe/stripe-react-native";
-import { paymentIntentRequest, postUser } from "../../services";
-import { getValueFor, save } from "../../services/secureStore";
+import { paymentIntentRequest, getSubscription } from "../../services";
+import { remove } from "aws-amplify/storage";
+import { router } from "expo-router";
 
 function Checkout() {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [items, setItems] = useState<Array<any>>([]);
-  const [subscribed, setSubscribed] = useState();
-  const [allProducts, setAllProducts] = useState(products);
-  const [availableProducts, setAvailableProducts] = useState<any>()
+  
+  const [availableProducts, setAvailableProducts] = useState<any>([]);
+  const [currentSubscription, setCurrentSubscription] = useState<any>([]);
+
+  const [loading, setLoading] = useState(false);
+  const [loadingCheckout, setLoadingCheckout] = useState(false);
+  const [checkoutDone, setCheckoutDone] = useState(false);
   
 
   let cartTotal = 0;
@@ -34,53 +39,59 @@ function Checkout() {
     cartTotal= itemsToCalculate.reduce((currentValue, acc)=> currentValue + acc, 0)
   }, [items])
 
-
-  useMemo(async ()=>{
-    let subscription:any = await getValueFor("sub");
-    setSubscribed(subscription);
-
-    let array = products.filter(product=>{
-      return subscription.includes(product.id)
+  const getUserSubscription = async () =>{
+    setLoading(true);
+    let userSubscription: any = await getSubscription();
+    setLoading(false);
+    let available = products.filter(product=>{
+      let currentSub = userSubscription.currentSubscriptions;
       
+      let found = currentSub.find((item: any) => item ===product.id)
+      return !found
     })
-    
-    setAvailableProducts(array)
-
-  }, [])
-
-  const setBaseSubscription = async () =>{
-    let subscription:any = await getValueFor("sub");
-    setSubscribed(subscription);
-    console.log("SET BASE")
-    console.log(allProducts)
-
-    console.log(subscription)
-    
-    let array = allProducts.filter(product=> subscription.includes(product.id))
-
-    console.log("avaiie", array)
-
-    
+    setAvailableProducts(available);
+    setCurrentSubscription(available);
   }
 
 
   useEffect(()=>{
-    console.log("useEffect ")
-    
-    setBaseSubscription();
-  }, )
+    getUserSubscription();
+  }, [])
 
-  const addItemToTable = (product: any) => {
-    if(product.id === "all"){
-      setItems([product]);
+  const addItemToTable = (selectedProduct: any) => {
+    if(selectedProduct.id === "all"){
+      setAvailableProducts([]);
+      setItems([selectedProduct]);
       return;
+    }else{
+      let array = availableProducts.filter((product: any)=>{
+        return product.id !== selectedProduct.id
+      })
+      setAvailableProducts(array)
+      setItems([...items, selectedProduct]);
     }
-    setItems([...items, product]);
+    
   };
 
-  const removeItemFromTable = (e:any) => {
-    const name = e.target.getAttribute("name")
-    setItems(l => l.filter(item => item.name !== name));
+  const removeItemFromTable = (selectedProduct: any) => {
+
+    if(selectedProduct.id === "all"){
+      setItems([]);
+      setAvailableProducts(currentSubscription)
+      return
+    }
+
+    let productRemoved = products.find((product)=>{
+      return product.id === selectedProduct.id
+    })
+    
+    setAvailableProducts([...availableProducts, productRemoved]);
+
+    let array = items.filter(item=>{
+      return item.id !== selectedProduct.id
+    })
+    setItems(array);
+
   };
 
   const fetchPaymentSheetParams = async () => {
@@ -102,10 +113,18 @@ function Checkout() {
   };
 
   const initializePaymentSheet = async () => {
+    if(items.length===0){
+      Alert.alert("Necesitas añadir alguna subscripción al carrito para continuar.")
+      return;
+    }
+    
+    setLoadingCheckout( true);
+    
     try {
       const { ephemeralKey, customer, paymentIntent }: any =
         await fetchPaymentSheetParams();
-
+        setLoadingCheckout( false );
+        setCheckoutDone(true);
       const { error } = await initPaymentSheet({
         merchantDisplayName: "Merchant",
         customerId: customer,
@@ -114,7 +133,9 @@ function Checkout() {
         paymentIntentClientSecret: paymentIntent,
       });
     } catch (e) {
+      Alert.alert("Error", "Ha ocurrido un error, por favor, contacta con el administrador." );
       console.log("error" + e);
+      setLoadingCheckout( false );
     }
   };
 
@@ -126,18 +147,13 @@ function Checkout() {
     if (error) {
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
-      let currentSub: any = await getValueFor("sub");
-      let addToSub = items.map(product=>product.id).join(",");
-      let updatedSub = currentSub.concat(addToSub).concat(",")
-      
       Alert.alert("Success", "Your order is confirmed!");
-      await save("sub", updatedSub)
-      await postUser(updatedSub)
+      router.push("/checkout")
+      getUserSubscription();
     }
   };
 
-  useEffect(() => {}, []);
-
+  
   return (
     <ScrollView contentContainerStyle={s.container}>
       <StripeProvider
@@ -145,6 +161,8 @@ function Checkout() {
         urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
         merchantIdentifier="merchant.com.myapp" // required for Apple Pay
       >
+
+        
         <View style={s.infoContainer}>
           <Text style={s.cartTitle}> Mi Carrito</Text>
           <DataTable>
@@ -157,6 +175,9 @@ function Checkout() {
               </DataTable.Title>
               <DataTable.Title textStyle={{ color: "black" }}>
                 Precio
+              </DataTable.Title>
+              <DataTable.Title textStyle={{ color: "black" }}>
+                {""}
               </DataTable.Title>
             </DataTable.Header>
             {items.map((selectedProducts) => {
@@ -171,6 +192,13 @@ function Checkout() {
                   </DataTable.Cell>
                   <DataTable.Cell textStyle={{ color: "black" }}>
                     <Text>{selectedProducts.price} €</Text> 
+                    
+                  </DataTable.Cell>
+                  <DataTable.Cell textStyle={{ color: "black" }}>
+                  <Button mode="text" onPress={()=>removeItemFromTable(selectedProducts)}>
+                    Quitar
+                  </Button>
+                    
                   </DataTable.Cell>
                 </DataTable.Row>
               );
@@ -187,39 +215,59 @@ function Checkout() {
               <DataTable.Cell textStyle={{ color: "black", fontSize: 20 }}>
                 <Text>{cartTotal} €</Text> 
               </DataTable.Cell>
+              <DataTable.Cell textStyle={{ color: "black", fontSize: 20 }}>
+              {""}
+              </DataTable.Cell>
             </DataTable.Row>
           </DataTable>
         </View>
         <View style={s.infoContainerChip}>
           <Text style={s.cartTitle}>Subscripciones disponibles</Text>
-          {allProducts.map((filteredProduct) => {
-            return (
-              <Chip
-                key={filteredProduct.key}
-                style={s.chip}
-                onPress={() => addItemToTable(filteredProduct)}
-              >
-                {filteredProduct.name}
-              </Chip>
-            );
-          })}
+          {loading &&
+            <ActivityIndicator style={s.loadingSpinner} size={'large'} animating={true} />
+          }
+          {!loading &&
+            availableProducts.map((filteredProduct: any) => {
+              return (
+                <Chip
+                  key={filteredProduct.key}
+                  style={s.chip}
+                  onPress={() => addItemToTable(filteredProduct)}
+                >
+                  {filteredProduct.name}
+                </Chip>
+              );
+            })
+          }
         </View>
-
-        <View style={s.cartCheckoutContainer}>
-          <Button
+        <View>
+          {!checkoutDone &&
+            <Button
             style={s.checkoutButton}
             mode="elevated"
             onPress={initializePaymentSheet}
           >
-            Checkout
+            {loadingCheckout &&
+              <ActivityIndicator style={s.loadingSpinner} size={'small'} animating={true} />
+            }
+            {!loadingCheckout &&
+              <Text>Checkout</Text>
+            }
+            
           </Button>
-          <Button
+          }
+
+          {checkoutDone &&
+            <Button
             style={s.checkoutButton}
             mode="elevated"
             onPress={openPaymentSheet}
           >
             Pagar
           </Button>
+          }
+          
+          
         </View>
       </StripeProvider>
     </ScrollView>
@@ -229,15 +277,15 @@ function Checkout() {
 const s = StyleSheet.create({
   chip: {
     alignSelf: "flex-start",
-
     margin: 10,
   },
   container: {
     flex: 0,
     backgroundColor: "#e5dedd",
     alignContent: "center",
+    height: "100%",
   },
-  cartCheckoutContainer: {},
+  
   checkoutButton: {
     borderRadius: 0,
     margin: 20,
@@ -255,6 +303,9 @@ const s = StyleSheet.create({
   },
   dataTableText: {
     color: "black",
+  },
+  loadingSpinner:{
+    margin: 20
   },
   switch: {
     alignSelf: "center",
