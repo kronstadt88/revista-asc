@@ -150,6 +150,104 @@
       "service": "Lambda"
     }
   },
+  "parameters": {
+    "AMPLIFY_function_getArticle_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getArticle"
+        }
+      ]
+    },
+    "AMPLIFY_function_getArticle_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getArticle"
+        }
+      ]
+    },
+    "AMPLIFY_function_getCustomers_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getCustomers"
+        }
+      ]
+    },
+    "AMPLIFY_function_getCustomers_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getCustomers"
+        }
+      ]
+    },
+    "AMPLIFY_function_getSubscription_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getSubscription"
+        }
+      ]
+    },
+    "AMPLIFY_function_getSubscription_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getSubscription"
+        }
+      ]
+    },
+    "AMPLIFY_function_getUsers_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getUsers"
+        }
+      ]
+    },
+    "AMPLIFY_function_getUsers_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getUsers"
+        }
+      ]
+    },
+    "AMPLIFY_function_paymentIntent_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "paymentIntent"
+        }
+      ]
+    },
+    "AMPLIFY_function_paymentIntent_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "paymentIntent"
+        }
+      ]
+    },
+    "AMPLIFY_function_presignup_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "presignup"
+        }
+      ]
+    },
+    "AMPLIFY_function_presignup_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "presignup"
+        }
+      ]
+    }
+  },
   "storage": {
     "users": {
       "providerPlugin": "awscloudformation",

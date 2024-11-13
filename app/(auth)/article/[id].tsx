@@ -111,7 +111,7 @@ function Article() {
       
       <ScrollView style={styles.container}>
         <Card style={styles.cardStyle}>
-          <Card.Title title="Forex" subtitle={item.id}  style={styles.title}/>
+          <Card.Title  title="Forex" subtitle={item.id}  style={styles.title}/>
         </Card>
         {editMode.mode && (
           <>
@@ -213,7 +213,7 @@ function Article() {
           <>
             <Button
               style={styles.addArticleButton}
-              mode="outlined"
+              mode="contained"
               onPress={() => setAddMode(!addMode)}
             >
               Add new Article
@@ -281,9 +281,10 @@ const styles = StyleSheet.create({
     alignContent: "center",
   },
   title:{
-    width: "80%",
+    width: "100%",
     borderRadius: 0,
-    color: 'red'
+    color: 'red',
+    
   },
   addArticleButton: {
     margin: 30,
@@ -307,6 +308,7 @@ const styles = StyleSheet.create({
   },
   cardStyle: {
     backgroundColor: '#ffffff',
+    color: "black",
     marginBottom: 40,
   },
   articleText: {

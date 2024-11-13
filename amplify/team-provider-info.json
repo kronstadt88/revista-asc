@@ -32,19 +32,104 @@
         },
         "getSubscription": {
           "deploymentBucketName": "amplify-revistaasc-dev-141602-deployment",
-          "s3Key": "amplify-builds/getSubscription-4f6a6476734a764f6b42-build.zip"
+          "s3Key": "amplify-builds/getSubscription-74557739547454717555-build.zip"
         },
         "presignup": {
           "deploymentBucketName": "amplify-revistaasc-dev-141602-deployment",
           "s3Key": "amplify-builds/presignup-614434694d4b2f6b4945-build.zip"
         },
-        "getCustomers": {}
+        "getCustomers": {
+          "deploymentBucketName": "amplify-revistaasc-dev-141602-deployment",
+          "s3Key": "amplify-builds/getCustomers-4e4d7672624b74524872-build.zip"
+        },
+        "users": {}
       },
       "storage": {
         "users": {}
       },
       "api": {
         "ascpi": {}
+      }
+    }
+  },
+  "test": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-revistaasc-test-150352-authRole",
+      "UnauthRoleArn": "arn:aws:iam::741914069066:role/amplify-revistaasc-test-150352-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::741914069066:role/amplify-revistaasc-test-150352-authRole",
+      "Region": "eu-west-1",
+      "DeploymentBucketName": "amplify-revistaasc-test-150352-deployment",
+      "UnauthRoleName": "amplify-revistaasc-test-150352-unauthRole",
+      "StackName": "amplify-revistaasc-test-150352",
+      "StackId": "arn:aws:cloudformation:eu-west-1:741914069066:stack/amplify-revistaasc-test-150352/1f6f3e50-a1c8-11ef-a5b0-0a79c159aa69",
+      "AmplifyAppId": "d1wa4z2fvezqj1"
+    },
+    "categories": {
+      "auth": {
+        "revistaasc2bed4ced": {},
+        "userPoolGroups": {}
+      },
+      "function": {
+        "getArticle": {},
+        "getCustomers": {},
+        "getSubscription": {},
+        "getUsers": {},
+        "paymentIntent": {},
+        "presignup": {},
+        "users": {}
+      }
+    }
+  },
+  "prod": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-revistaasc-prod-150510-authRole",
+      "UnauthRoleArn": "arn:aws:iam::741914069066:role/amplify-revistaasc-prod-150510-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::741914069066:role/amplify-revistaasc-prod-150510-authRole",
+      "Region": "eu-west-1",
+      "DeploymentBucketName": "amplify-revistaasc-prod-150510-deployment",
+      "UnauthRoleName": "amplify-revistaasc-prod-150510-unauthRole",
+      "StackName": "amplify-revistaasc-prod-150510",
+      "StackId": "arn:aws:cloudformation:eu-west-1:741914069066:stack/amplify-revistaasc-prod-150510/4db76350-a1c8-11ef-9873-02142fd12b57",
+      "AmplifyAppId": "d1wa4z2fvezqj1",
+      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-revistaasc-prod-150510-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
+    },
+    "categories": {
+      "auth": {
+        "revistaasc2bed4ced": {},
+        "userPoolGroups": {}
+      },
+      "function": {
+        "getArticle": {
+          "deploymentBucketName": "amplify-revistaasc-prod-150510-deployment",
+          "s3Key": "amplify-builds/getArticle-7a576837454e5a344c64-build.zip"
+        },
+        "getCustomers": {
+          "deploymentBucketName": "amplify-revistaasc-prod-150510-deployment",
+          "s3Key": "amplify-builds/getCustomers-4e4d7672624b74524872-build.zip"
+        },
+        "getSubscription": {
+          "deploymentBucketName": "amplify-revistaasc-prod-150510-deployment",
+          "s3Key": "amplify-builds/getSubscription-74557739547454717555-build.zip"
+        },
+        "getUsers": {
+          "deploymentBucketName": "amplify-revistaasc-prod-150510-deployment",
+          "s3Key": "amplify-builds/getUsers-6a387945363137326c61-build.zip"
+        },
+        "paymentIntent": {
+          "deploymentBucketName": "amplify-revistaasc-prod-150510-deployment",
+          "s3Key": "amplify-builds/paymentIntent-636377756563574b334f-build.zip"
+        },
+        "presignup": {
+          "deploymentBucketName": "amplify-revistaasc-prod-150510-deployment",
+          "s3Key": "amplify-builds/presignup-614434694d4b2f6b4945-build.zip"
+        },
+        "users": {}
+      },
+      "api": {
+        "ascpi": {}
+      },
+      "storage": {
+        "users": {}
       }
     }
   }
