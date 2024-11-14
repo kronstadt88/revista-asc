@@ -1,0 +1,38 @@
+{
+  "aws_project_region": "eu-west-1",
+  "aws_cognito_identity_pool_id": "eu-west-1:aa03bcaa-4e33-42a3-badf-813e01bd1298",
+  "aws_cognito_region": "eu-west-1",
+  "aws_user_pools_id": "eu-west-1_w5asy0g68",
+  "aws_user_pools_web_client_id": "3n4n7qbk948h58tnd2o3dhnoi4",
+  "oauth": {},
+  "aws_cognito_username_attributes": [],
+  "aws_cognito_social_providers": [],
+  "aws_cognito_signup_attributes": [
+    "EMAIL"
+  ],
+  "aws_cognito_mfa_configuration": "OFF",
+  "aws_cognito_mfa_types": [
+    "SMS"
+  ],
+  "aws_cognito_password_protection_settings": {
+    "passwordPolicyMinLength": 8,
+    "passwordPolicyCharacters": []
+  },
+  "aws_cognito_verification_mechanisms": [
+    "EMAIL"
+  ],
+  "aws_cloud_logic_custom": [
+    {
+      "name": "ascpi",
+      "endpoint": "https://sgsldh5134.execute-api.eu-west-1.amazonaws.com/dev",
+      "region": "eu-west-1"
+    }
+  ],
+  "aws_dynamodb_all_tables_region": "eu-west-1",
+  "aws_dynamodb_table_schemas": [
+    {
+      "tableName": "users-dev",
+      "region": "eu-west-1"
+    }
+  ]
+}
