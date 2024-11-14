@@ -11,17 +11,13 @@ import {
 import { Button, DataTable, Chip, ActivityIndicator } from "react-native-paper";
 import { products } from "../../constants/products";
 
-import {
-  initPaymentSheet,
-  StripeProvider,
-  useStripe,
-} from "@stripe/stripe-react-native";
+
 import { paymentIntentRequest, getSubscription } from "../../services";
 import { remove } from "aws-amplify/storage";
 import { router } from "expo-router";
 
 function Checkout() {
-  const { initPaymentSheet, presentPaymentSheet } = useStripe();
+  //const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [items, setItems] = useState<Array<any>>([]);
   
   const [availableProducts, setAvailableProducts] = useState<any>([]);
@@ -120,47 +116,19 @@ function Checkout() {
     
     setLoadingCheckout( true);
     
-    try {
-      const { ephemeralKey, customer, paymentIntent }: any =
-        await fetchPaymentSheetParams();
-        setLoadingCheckout( false );
-        setCheckoutDone(true);
-      const { error } = await initPaymentSheet({
-        merchantDisplayName: "Merchant",
-        customerId: customer,
-        customerEphemeralKeySecret: ephemeralKey,
-
-        paymentIntentClientSecret: paymentIntent,
-      });
-    } catch (e) {
-      Alert.alert("Error", "Ha ocurrido un error, por favor, contacta con el administrador." );
-      console.log("error" + e);
-      setLoadingCheckout( false );
-    }
+   
   };
 
   const openPaymentSheet = async () => {
     
     
-      
-    const { error } = await presentPaymentSheet();
-    if (error) {
-      Alert.alert(`Error code: ${error.code}`, error.message);
-    } else {
-      Alert.alert("Success", "Your order is confirmed!");
-      router.push("/checkout")
-      getUserSubscription();
-    }
+    
   };
 
   
   return (
     <ScrollView contentContainerStyle={s.container}>
-      <StripeProvider
-        publishableKey="pk_test_51OthaURvdA3t4SZBMnop8NP6tXvOpDv4hJYO7S8eHSAIsmG5BYCHigKirpZt7hkTLfYipw7sO5pxXkNd5GlyIQUH00fRJkpcR7"
-        urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
-        merchantIdentifier="merchant.com.myapp" // required for Apple Pay
-      >
+     
 
         
         <View style={s.infoContainer}>
@@ -269,7 +237,7 @@ function Checkout() {
           
           
         </View>
-      </StripeProvider>
+      
     </ScrollView>
   );
 }
