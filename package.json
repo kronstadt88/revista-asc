@@ -51,7 +51,6 @@
   "devDependencies": {
     "@aws-amplify/cli-extensibility-helper": "^3.0.25",
     "@babel/core": "7.23.6",
-    "@stripe/stripe-react-native": "0.38.6",
     "@types/react": "18.2.45",
     "typescript": "^5.1.3"
   },
