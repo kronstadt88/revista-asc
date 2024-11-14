@@ -1,0 +1,89 @@
+{
+  "apiRoutes": [],
+  "htmlRoutes": [
+    {
+      "file": "./index.tsx",
+      "page": "/index",
+      "namedRegex": "^/(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./modal.tsx",
+      "page": "/modal",
+      "namedRegex": "^/modal(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(auth)/profile.tsx",
+      "page": "/(auth)/profile",
+      "namedRegex": "^(?:/\\(auth\\))?/profile(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(auth)/library.tsx",
+      "page": "/(auth)/library",
+      "namedRegex": "^(?:/\\(auth\\))?/library(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(auth)/products.tsx",
+      "page": "/(auth)/products",
+      "namedRegex": "^(?:/\\(auth\\))?/products(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(auth)/checkout.tsx",
+      "page": "/(auth)/checkout",
+      "namedRegex": "^(?:/\\(auth\\))?/checkout(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "expo-router/build/views/Sitemap.js",
+      "page": "/_sitemap",
+      "namedRegex": "^/_sitemap(?:/)?$",
+      "routeKeys": {},
+      "generated": true
+    },
+    {
+      "file": "./side/payment.tsx",
+      "page": "/side/payment",
+      "namedRegex": "^/side/payment(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(auth)/checkout/[id].tsx",
+      "page": "/(auth)/checkout/[id]",
+      "namedRegex": "^(?:/\\(auth\\))?/checkout/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./(auth)/article/[id].tsx",
+      "page": "/(auth)/article/[id]",
+      "namedRegex": "^(?:/\\(auth\\))?/article/(?<id>[^/]+?)(?:/)?$",
+      "routeKeys": {
+        "id": "id"
+      }
+    },
+    {
+      "file": "./[...missing].tsx",
+      "page": "/[...missing]",
+      "namedRegex": "^(?:/(?<missing>.+?))?(?:/)?$",
+      "routeKeys": {
+        "missing": "missing"
+      }
+    }
+  ],
+  "notFoundRoutes": [
+    {
+      "file": "expo-router/build/views/Unmatched.js",
+      "page": "/+not-found",
+      "namedRegex": "^(?:/(?<notfound>.+?))?(?:/)?$",
+      "routeKeys": {
+        "notfound": "not-found"
+      },
+      "generated": true
+    }
+  ]
+}
