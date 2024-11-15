@@ -1,5 +1,5 @@
 import { withAuthenticator } from "@aws-amplify/ui-react-native";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import {
   Alert,
   Platform,
@@ -17,8 +17,8 @@ import {
   useStripe,
 } from "@stripe/stripe-react-native";
 import { paymentIntentRequest, getSubscription } from "../../services";
-import { remove } from "aws-amplify/storage";
 import { router } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 
 function Checkout() {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
@@ -54,9 +54,11 @@ function Checkout() {
   }
 
 
-  useEffect(()=>{
-    getUserSubscription();
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      getUserSubscription()
+    }, [])
+  );
 
   const addItemToTable = (selectedProduct: any) => {
     if(selectedProduct.id === "all"){
@@ -141,15 +143,12 @@ function Checkout() {
 
   const openPaymentSheet = async () => {
     
-    
-      
     const { error } = await presentPaymentSheet();
     if (error) {
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
-      Alert.alert("Success", "Your order is confirmed!");
-      router.push("/checkout")
-      getUserSubscription();
+      Alert.alert("Éxito", "Tu pedido se ha realizado");
+      router.push("/products")
     }
   };
 
@@ -222,23 +221,30 @@ function Checkout() {
           </DataTable>
         </View>
         <View style={s.infoContainerChip}>
-          <Text style={s.cartTitle}>Subscripciones disponibles</Text>
-          {loading &&
-            <ActivityIndicator style={s.loadingSpinner} size={'large'} animating={true} />
-          }
-          {!loading &&
-            availableProducts.map((filteredProduct: any) => {
-              return (
-                <Chip
-                  key={filteredProduct.key}
-                  style={s.chip}
-                  onPress={() => addItemToTable(filteredProduct)}
-                >
-                  {filteredProduct.name}
-                </Chip>
-              );
-            })
-          }
+          <View style={s.chipContainerTitle}><Text style={s.cartTitle}>Subscripciones disponibles</Text></View>
+          
+          <View style={s.chipContainer}>
+            {loading &&
+              <ActivityIndicator style={s.loadingSpinner} size={'large'} animating={true} />
+            }
+            {!loading &&
+              availableProducts.map((filteredProduct: any) => {
+                return (
+                  
+                  <Chip
+                    key={filteredProduct.key}
+                    style={s.chip}
+                    onPress={() => addItemToTable(filteredProduct)}
+                  >
+                    {filteredProduct.name}
+                  </Chip>
+                  
+                );
+              })
+            }
+
+          </View>
+          
         </View>
         <View>
           {!checkoutDone &&
@@ -259,10 +265,10 @@ function Checkout() {
 
           {checkoutDone &&
             <Button
-            style={s.checkoutButton}
-            mode="elevated"
-            onPress={openPaymentSheet}
-          >
+              style={s.checkoutButton}
+              mode="elevated"
+              onPress={openPaymentSheet}
+            >
             Pagar
           </Button>
           }
@@ -280,10 +286,11 @@ const s = StyleSheet.create({
     margin: 10,
   },
   container: {
-    flex: 0,
+    flex: 1,
     backgroundColor: "#e5dedd",
     alignContent: "center",
-    height: "100%",
+    
+    
   },
   
   checkoutButton: {
@@ -299,7 +306,7 @@ const s = StyleSheet.create({
   },
   cartTitle: {
     textAlign: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   dataTableText: {
     color: "black",
@@ -322,8 +329,18 @@ const s = StyleSheet.create({
   infoContainerChip: {
     margin: 20,
     padding: 20,
+    display:"flex",
+    
     backgroundColor: "white",
     borderRadius: 5,
+  },
+  chipContainer:{
+    
+    flexDirection:"row",
+    flexWrap: 'wrap'
+  },
+  chipContainerTitle:{
+    marginBottom: 20
   },
   info: {
     fontFamily: Platform.select({

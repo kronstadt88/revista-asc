@@ -9,12 +9,8 @@ import { SplashScreen, Stack } from "expo-router";
 import React, { useEffect } from "react";
 import { Tabs } from "expo-router";
 
-import { Button, Menu, PaperProvider } from "react-native-paper";
-
 export { ErrorBoundary } from "expo-router";
-
 import Products from "./products";
-import Checkout from "./checkout/[id]";
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -49,13 +45,13 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const [visible, setVisible] = React.useState(false);
+  useEffect(()=>{
+    console.log("ROOT")
+  },[])
 
   return (
-    
-      <ThemeProvider value={DefaultTheme}>
-        
 
+      <ThemeProvider value={DefaultTheme}>
         <Tabs screenOptions={{ tabBarActiveTintColor: "blue" }}>
           <Tabs.Screen
             name="products"

@@ -55,6 +55,14 @@
           ],
           "category": "auth",
           "resourceName": "userPoolGroups"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "paymentIntentLibrary"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -144,6 +152,12 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "paymentIntentLibrary": {
+      "build": true,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "presignup": {
       "build": true,
       "providerPlugin": "awscloudformation",
@@ -212,6 +226,22 @@
         {
           "category": "function",
           "resourceName": "getUsers"
+        }
+      ]
+    },
+    "AMPLIFY_function_paymentIntentLibrary_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "paymentIntentLibrary"
+        }
+      ]
+    },
+    "AMPLIFY_function_paymentIntentLibrary_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "paymentIntentLibrary"
         }
       ]
     },

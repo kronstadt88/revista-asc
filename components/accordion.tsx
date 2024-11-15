@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   FlatList,
   StyleSheet,
@@ -19,6 +19,7 @@ import Animated, {
 import { FontAwesome } from "@expo/vector-icons";
 import { getSubscription } from '../services';
 import { ActivityIndicator } from 'react-native-paper';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 const data = [
@@ -73,15 +74,19 @@ const AnimatedAcordion = () => {
   const [userSub, setUserSub] = useState<any>([])
 
   const getUserSubscription = async () =>{
+
+    
     setLoading(true);
     let userSubscription: any = await getSubscription();
     setLoading(false);
     setUserSub(userSubscription.currentSubscriptions);
   }
   
-  useEffect(()=>{
-    getUserSubscription();
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      getUserSubscription()
+    }, [])
+  );
 
   return (
     <View style={styles.containerStyle}>

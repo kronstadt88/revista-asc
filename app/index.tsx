@@ -26,19 +26,12 @@ function IndexScreen() {
         <ImageBackground source={require('../assets/images/chart.jpg')} resizeMode="cover" style={styles.image}>
           <Button
             style={styles.button}
-            mode="contained"
+            mode="outlined"
             onPress={() => router.push("/products")}
           >
             Empezar
           </Button>
-
-          
-        </ImageBackground>
-
-
-        
-
-        
+        </ImageBackground>        
       </View>
     
   );

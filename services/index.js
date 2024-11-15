@@ -116,10 +116,11 @@ export const getSubscription = async () => {
 
 export const deleteSubscription = async (id) => {
   try {
+    
     const session = await fetchAuthSession();
     const idToken = session.tokens?.idToken?.toString();
     
-    const restOperation = delete({
+    const restOperation = del({
       apiName: "ascpi",
       path: `/subscription/${id}`,
       options: {
@@ -227,7 +228,7 @@ export const deleteArticle = async (article) => {
       },
     });
     const response = await restOperation.response;
-    console.log("GET call succeeded: ", response);
+    console.log("DELETE call succeeded: ", response);
     return response;
   } catch (e) {
     console.log(e);
@@ -254,11 +255,6 @@ export const deleteUser = async (articlePair) => {
     console.log(e);
   }
 };
-
-
-
-
-
 
 export const paymentIntentRequest = async (subscription) => {
   

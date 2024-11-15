@@ -32,17 +32,21 @@
         },
         "getSubscription": {
           "deploymentBucketName": "amplify-revistaasc-dev-141602-deployment",
-          "s3Key": "amplify-builds/getSubscription-74557739547454717555-build.zip"
+          "s3Key": "amplify-builds/getSubscription-4c4c4f5071416e64544c-build.zip"
         },
         "presignup": {
           "deploymentBucketName": "amplify-revistaasc-dev-141602-deployment",
-          "s3Key": "amplify-builds/presignup-614434694d4b2f6b4945-build.zip"
+          "s3Key": "amplify-builds/presignup-794f66434f5061393278-build.zip"
         },
         "getCustomers": {
           "deploymentBucketName": "amplify-revistaasc-dev-141602-deployment",
           "s3Key": "amplify-builds/getCustomers-4e4d7672624b74524872-build.zip"
         },
-        "users": {}
+        "users": {},
+        "paymentIntentLibrary": {
+          "deploymentBucketName": "amplify-revistaasc-dev-141602-deployment",
+          "s3Key": "amplify-builds/paymentIntentLibrary-31614c532b4b434b6c47-build.zip"
+        }
       },
       "storage": {
         "users": {}

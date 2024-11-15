@@ -67,6 +67,21 @@
         },
         "setting": "private"
       }
+    },
+    "/paymentIntentLibrary": {
+      "name": "/paymentIntentLibrary",
+      "lambdaFunction": "paymentIntentLibrary",
+      "permissions": {
+        "groups": {
+          "ascusers": [
+            "create",
+            "read",
+            "update",
+            "delete"
+          ]
+        },
+        "setting": "private"
+      }
     }
   }
 }

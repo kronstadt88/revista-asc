@@ -1,13 +1,18 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme,  ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import React, { useEffect } from 'react';
 import {  signIn, type SignInInput } from 'aws-amplify/auth';
 
+import {
+  MD3LightTheme as DefaultTheme,
+  PaperProvider,
+} from 'react-native-paper';
+
 import { Authenticator } from "@aws-amplify/ui-react-native";
 
-import { PaperProvider } from 'react-native-paper';
+
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -44,10 +49,15 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
+const theme = {
+  ...DefaultTheme,
+  
+};
+
 function RootLayoutNav() {
   
   return (
-    <PaperProvider>
+    <PaperProvider theme={theme}>
     <Authenticator.Provider>
       <Authenticator
       components={{
@@ -121,7 +131,7 @@ function RootLayoutNav() {
         }}>
 
     
-    <ThemeProvider value={DefaultTheme}>
+    
       <Stack
         initialRouteName='/'
         
@@ -139,7 +149,7 @@ function RootLayoutNav() {
       >
         
       </Stack>
-      </ThemeProvider>
+      
     </Authenticator>
     </Authenticator.Provider>
     </PaperProvider>

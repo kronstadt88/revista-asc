@@ -1,58 +1,114 @@
-import { StyleSheet, View, Text, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView, Alert } from "react-native";
+import {Text} from 'react-native-paper'
 import {
   useAuthenticator,
   withAuthenticator,
 } from '@aws-amplify/ui-react-native';
-import { useEffect, useState } from "react";
-import { Button, Chip } from "react-native-paper";
+import { useCallback, useState } from "react";
+import { ActivityIndicator, Button, Chip, Divider } from "react-native-paper";
 
 import { deleteSubscription, getSubscription } from "../../services";
 
+import { useFocusEffect } from '@react-navigation/native';
+import { getValueFor, save } from "../../services/secureStore";
+
 
 function Profile() {
-
+  
   const [loading, setLoading] = useState(false);
   const [availableProducts, setAvailableProducts] = useState<any>([]);
   const { user, signOut } = useAuthenticator((context) => [context.user]);
   
+
+  useFocusEffect(
+    useCallback(() => {
+      getUserSubscription()
+    }, [])
+  );
+  
   const getUserSubscription = async () =>{
+
+    let needsReload = await getValueFor("needsReload")
+    if(needsReload === "false"){
+      return;
+    }
+
     setLoading(true);
     let userSubscription: any = await getSubscription();
-    console.log(userSubscription)
     setLoading(false);
-    setAvailableProducts(userSubscription.subscription.data)
-    console.log(" availe",availableProducts)
+    setAvailableProducts(userSubscription.groupedSubscriptions);
     
   }
-  const unsubscribe = (product: any) =>{
-    deleteSubscription(product);
-  }
-  
-  useEffect(()=>{
-    getUserSubscription();
-  }, [])
 
+  const showCancelPrompt = (product: any) =>{
+    Alert.alert(
+      'Cancelar subscripción',
+      'Cancelando esta subscripción se perderá el acceso a los artículos correspondientes. ¿Desea continuar?',
+      [
+        {
+          text: 'Cancelar',
+        },
+        {
+          text: 'Aceptar',
+          onPress: () => unsubscribe(product),
+          style: 'cancel',
+        },
+      ],
+      
+    );
+    
+  }
+
+  const unsubscribe = async (product: any) =>{
+    
+    console.log("unsubscribe")
+    setLoading(true);
+    await deleteSubscription(product);
+    
+    await getUserSubscription()
+    Alert.alert("La subscripción se ha cancelado.")
+    save("needsReload", "true");
+
+  }
 
   return (
     
       
         <ScrollView style={s.container}>
           <View style={s.infoContainer}>
-            <Button mode="contained" onPress={signOut}>Cerrar sesión</Button>
+          <Text style={s.textMarginBottom20} variant="headlineMedium">Sesión</Text>
+            <Button mode="outlined"   onPress={signOut}>Cerrar sesión</Button>
           </View>
 
           <View style={s.infoContainer}>
-            <Text>Cancelar Suscripciones</Text>
+          <Text style={s.textMarginBottom20} variant="headlineMedium">Subscripciones activas</Text>
+            {loading &&
+              <ActivityIndicator style={s.spinner} size={"large"} animating={true}  />
+            }
             {!loading &&
-              availableProducts.map((filteredProduct: any) => {
+              availableProducts.map((filteredProduct: any, index: any) => {
                 return (
-                  <Chip
-                    key={filteredProduct.id}
-                    style={s.chip}
-                    onPress={() => unsubscribe(filteredProduct)}
-                  >
-                    {filteredProduct.id}
-                  </Chip>
+                  <View style={s.subContainer} key={index}>
+                    <Text variant="bodyMedium">Subscripción {filteredProduct.id} incluye: </Text>
+                    {filteredProduct.products.map((product: any, index: any)=>(
+                      <View key={index} style={s.chipContainer}>
+                      <Chip
+                        key={index}
+                        style={s.chip}>
+                        {product}
+                      </Chip>
+                      </View>
+                    )
+                      )}
+                    <Text variant="bodyMedium">Creada: {filteredProduct.startDate}  </Text>
+                    <Text variant="bodyMedium">Empezó: {filteredProduct.currentPeriodStart}  </Text>
+                    <Text variant="bodyMedium">Acaba: {filteredProduct.currentPeriodEnd}  </Text>
+                    <Button mode="outlined" style={s.divider}onPress={() => showCancelPrompt(filteredProduct.id)}>
+                      Cancelar
+                    </Button>
+                    
+                    <Divider style={s.divider}/>
+                  </View>
                 );
               })
             }
@@ -76,14 +132,30 @@ const s = StyleSheet.create({
     backgroundColor: "#e5dedd",
     alignContent: "center",
   },
+  subContainer:{
+    display:"flex",
+  },
+  divider:{
+    marginTop:20,
+    marginBottom:20
+  },
+  spinner:{
+    marginTop: 30
+  },
   chip: {
-    alignSelf: "flex-start",
+    
     margin: 10,
+  },
+  textMarginBottom20:{
+    marginBottom: 20
   },
   switch: {
     alignSelf: "center",
     marginTop: 20,
     marginBottom: 20,
+  },
+  chipContainer:{
+    flexDirection: "row"
   },
   infoContainer: {
     margin: 20,
