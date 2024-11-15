@@ -45,9 +45,7 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  useEffect(()=>{
-    console.log("ROOT")
-  },[])
+  
 
   return (
 
