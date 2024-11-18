@@ -27,24 +27,57 @@ export const handler = async (event, context)=>{
     };
   }
 
-  if (event.resource === "/subscription/{proxy+}" && event.httpMethod === "PUT") {
+  if (event.resource === "/customers/{proxy+}" && event.httpMethod === "PUT") {
 
-    const customer = await stripe.customers.update(event.pathParameters.proxy,
+    let requestJSON = JSON.parse(event.body);
+
+    try{
+      const customer = await stripe.customers.update(event.pathParameters.proxy,
         {
-          metadata: {
-            order_id: '6735',
+          address:{
+            line1:requestJSON.customer.line1,
+            city:requestJSON.customer.city,
+            postal_code:requestJSON.customer.postalCode,
+            country:requestJSON.customer.country,
           },
+          shipping:{
+            name: requestJSON.customer.name,
+            phone: requestJSON.customer.phone,
+            address: {
+              line1: requestJSON.customer.shippingAddressLine1,
+              postal_code: requestJSON.customer.shippingAddressPostalCode,
+              country: requestJSON.customer.shippingAddressCountry,
+              city: requestJSON.customer.shippingAddressCity,
+            },
+            
+          },
+          
         }
       );
+      return {
+  
+  
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "*",
+        },
+        statusCode: 200,
+        body: JSON.stringify({customer: customer})
+      };
+    }catch (e){
+      return {
+  
+  
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "*",
+        },
+        statusCode: 400,
+        body: JSON.stringify({error: e})
+      };
+    }
+    
 
-    return {
-  
-  
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "*",
-      },
-      body: JSON.stringify({customer: customer.data})
-    };
+    
   } 
 }

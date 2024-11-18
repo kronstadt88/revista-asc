@@ -17,7 +17,7 @@ import {
   StripeProvider,
   useStripe,
 } from "@stripe/stripe-react-native";
-import { paymentIntentRequestLibrary,  } from "../../services";
+import { getCustomer, paymentIntentLibraryRequest } from "../../services";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 
@@ -26,17 +26,37 @@ function Checkout() {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();  
   const [availableBooks, setBooks] = useState<Array<any>>([]);
   const [visible, setVisible] = useState(false);
+  
+  const [shippingAddress, setShippingAddress] = useState(null)
 
-  const [shippingAddress, setShippingAddress] = useState()
-
-  const showModal = (book) => {
+  const showModal = () => {
+    console.log(shippingAddress)
+    if(!shippingAddress){
+      Alert.alert("No tiene una dirección de envío asociada en su perfil. Puede agregarla en su perfil.")
+      return;
+    }
+    
     setVisible(true);
   }
   const hideModal = () => setVisible(false);
   const containerStyle = {backgroundColor: 'white', padding: 20};
 
+  const getCustomerDetails = async () =>{
+    
+
+    try{
+      let customerRetrieved: any = await getCustomer();
+      customerRetrieved = customerRetrieved.customer;
+      setShippingAddress(customerRetrieved.shipping);
+    }catch(e){
+      console.log(e)
+      Alert.alert("Un error ocurrió. Contacte con el administrador si necesita ayuda.")
+    }
+  }
+
   useEffect(()=>{
-    setBooks(books)
+    getCustomerDetails();
+    setBooks(books);
   }, [])
 
 
@@ -44,7 +64,7 @@ function Checkout() {
   const fetchPaymentSheetParams = async () => {
     
     try {
-      const response: any = await paymentIntentRequestLibrary();
+      const response: any = await paymentIntentLibraryRequest();
       const { paymentIntent, ephemeralKey, customerId } =
         await response.body.json();
 
@@ -100,7 +120,7 @@ function Checkout() {
         <Portal>
           <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
             <Text variant="titleLarge">Tu pedido se enviará a la dirección: </Text>
-            <Text variant="bodyMedium">Body Medium</Text>
+            <Text variant="bodyMedium">{shippingAddress}</Text>
 
             <Button
               style={s.checkoutButton}

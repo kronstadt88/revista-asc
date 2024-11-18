@@ -258,7 +258,7 @@ function Checkout() {
               <ActivityIndicator style={s.loadingSpinner} size={'small'} animating={true} />
             }
             {!loadingCheckout &&
-              <Text>Checkout</Text>
+              <Text>Proceder al pago</Text>
             }
             
           </Button>

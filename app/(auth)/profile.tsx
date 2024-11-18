@@ -1,5 +1,5 @@
 import { StyleSheet, View, ScrollView, Alert } from "react-native";
-import { Text } from "react-native-paper";
+import { Text, TextInput } from "react-native-paper";
 import {
   useAuthenticator,
   withAuthenticator,
@@ -7,7 +7,7 @@ import {
 import { useCallback, useState } from "react";
 import { ActivityIndicator, Button, Chip, Divider } from "react-native-paper";
 
-import { deleteSubscription, getCustomer, getSubscription } from "../../services";
+import { deleteSubscription, getCustomer, getSubscription, putCustomer } from "../../services";
 
 import { useFocusEffect } from "@react-navigation/native";
 import { getValueFor, save } from "../../services/secureStore";
@@ -15,12 +15,15 @@ import { getValueFor, save } from "../../services/secureStore";
 function Profile() {
   const [loading, setLoading] = useState(false);
   const [availableProducts, setAvailableProducts] = useState<any>([]);
+  const [customer, setCustomer] = useState<any>({
+    
+  })
   const { user, signOut } = useAuthenticator((context) => [context.user]);
 
   useFocusEffect(
     useCallback(() => {
       getUserSubscription();
-      getCustomerDetails()
+      getCustomerDetails();
       return () => {
         setAvailableProducts([]);
       };
@@ -28,10 +31,6 @@ function Profile() {
   );
 
   const getUserSubscription = async () => {
-    let needsReload = await getValueFor("needsReload");
-    if (needsReload === "false") {
-      return;
-    }
 
     setLoading(true);
     let userSubscription: any = await getSubscription();
@@ -40,8 +39,73 @@ function Profile() {
   };
 
   const getCustomerDetails = async () =>{
-    let customer = await getCustomer();
-    console.log(customer)
+    let customerRetrieved: any = await getCustomer();
+
+    customerRetrieved = customerRetrieved.customer;
+
+    setCustomer({
+      id: customerRetrieved.id,
+      name: customerRetrieved.name,
+      lastname: customerRetrieved.lastname,
+      email: customerRetrieved.email,
+      phone: customerRetrieved.phone,
+      line1: customerRetrieved.address.line1,
+      postalCode: customerRetrieved.address.postal_code,
+      city: customerRetrieved.address.city,
+      country: customerRetrieved.address.country,
+      shippingAddressLine1: customerRetrieved.shipping.address.line1,
+      shippingAddressCity: customerRetrieved.shipping.address.city,
+      shippingAddressPostalCode: customerRetrieved.shipping.address.postal_code,
+      shippingAddressCountry: customerRetrieved.shipping.address.country,
+    })
+    console.log( "customer", customerRetrieved)
+  }
+
+  const updateCustomerDetails = async ()=>{
+    console.log("inside customer")
+    if(customer.shippingAddressLine1 === "" || customer.shippingAddressLine1 === null || customer.shippingAddressLine1 === undefined ){
+      Alert.alert("El campo dirección de envío no puede estar vacío");
+      return;
+    }
+    if(customer.shippingAddressCity === "" || customer.shippingAddressCity === null || customer.shippingAddressCity === undefined ){
+      Alert.alert("El campo ciudad de envío no puede estar vacío");
+      return;
+    }
+    if(customer.shippingAddressPostalCode === "" || customer.shippingAddressPostalCode === null || customer.shippingAddressPostalCode === undefined ){
+      Alert.alert("El campo código postal de envío no puede estar vacío");
+      return;
+    }
+    if(customer.shippingAddressCountry === "" || customer.shippingAddressCountry === null || customer.shippingAddressCountry === undefined ){
+      Alert.alert("El campo país de envío no puede estar vacío");
+      return;
+    }
+    if(customer.line1 === "" || customer.line1 === null || customer.line1 === undefined ){
+      Alert.alert(" El campo dirección no puede estar vacío");
+      return;
+    }
+    if(customer.postalCode === "" || customer.postalCode === null || customer.postalCode === undefined ){
+      Alert.alert("El campo código postal no puede estar vacío");
+      return;
+    }
+    if(customer.city === "" || customer.city === null || customer.city === undefined ){
+      Alert.alert("El campo ciudad no puede estar vacío");
+      return;
+    }
+    if(customer.country === "" || customer.country === null || customer.country === undefined ){
+      Alert.alert("El campo país no puede estar vacío");
+      return;
+    }
+    try {
+      await putCustomer(customer);
+      await getCustomerDetails()
+      Alert.alert("Los datos han sido guardados.")
+    }catch (e){
+      console.log(e);
+      Alert.alert("Ocurrió un error al guardar los datos.")
+    }
+    
+    
+
   }
 
   const showCancelPrompt = (product: any) => {
@@ -68,7 +132,6 @@ function Profile() {
 
     await getUserSubscription();
     Alert.alert("La subscripción se ha cancelado.");
-    save("needsReload", "true");
   };
 
   return (
@@ -76,8 +139,89 @@ function Profile() {
       <View style={s.infoContainer}>
         <Text style={s.textMarginBottom20} variant="headlineMedium">
           Datos personales
+      
         </Text>
-        <Button mode="outlined" onPress={()=>{}}>
+        
+        <TextInput
+          mode="outlined"
+          style={s.formInput}
+          label="Nombre"
+          value={customer.name}
+          disabled={true}
+        />
+        
+        <TextInput
+          mode="outlined"
+          style={s.formInput}
+          label="Email"
+          disabled={true}
+          value={customer.email}
+        />
+        <TextInput
+          mode="outlined"
+          style={s.formInput}
+          label="Teléfono"
+          value={customer.phone}
+          disabled={true}
+        />
+        <TextInput
+          mode="outlined"
+          style={s.formInput}
+          label="Dirección"
+          value={customer.line1}
+          onChangeText={text => setCustomer({...customer, line1:text})}
+        />
+        <TextInput
+          mode="outlined"
+          style={s.formInput}
+          label="Código postal"
+          value={customer.postalCode}
+          onChangeText={text => setCustomer({...customer, postalCode:text})}
+        />
+        <TextInput
+          mode="outlined"
+          style={s.formInput}
+          label="Ciudad"
+          value={customer.city}
+          onChangeText={text => setCustomer({...customer, city:text})}
+        />
+        <TextInput
+          mode="outlined"
+          style={s.formInput}
+          label="País"
+          value={customer.country}
+          onChangeText={text => setCustomer({...customer, country:text})}
+        />
+
+        <TextInput
+          mode="outlined"
+          style={s.formInput}
+          label="Dirección para envíos"
+          value={customer.shippingAddressLine1}
+          onChangeText={text => setCustomer({...customer, shippingAddressLine1:text})}
+        />
+        <TextInput
+          mode="outlined"
+          style={s.formInput}
+          label="Código postal para envíos"
+          value={customer.shippingAddressPostalCode}
+          onChangeText={text => setCustomer({...customer, shippingAddressPostalCode:text})}
+        />
+        <TextInput
+          mode="outlined"
+          style={s.formInput}
+          label="Ciudad de envío"
+          value={customer.shippingAddressCity}
+          onChangeText={text => setCustomer({...customer, shippingAddressCity:text})}
+        />
+        <TextInput
+          mode="outlined"
+          style={s.formInput}
+          label="País de envío"
+          value={customer.shippingAddressCountry}
+          onChangeText={text => setCustomer({...customer, shippingAddressCountry:text})}
+        />
+        <Button mode="outlined" onPress={updateCustomerDetails}>
           Actualizar datos
         </Button>
       </View>
@@ -163,6 +307,9 @@ const s = StyleSheet.create({
   divider: {
     marginTop: 20,
     marginBottom: 20,
+  },
+  formInput:{
+    marginBottom:20
   },
   spinner: {
     marginTop: 30,

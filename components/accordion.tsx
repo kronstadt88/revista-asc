@@ -8,7 +8,7 @@ import {
   
   Pressable
 } from 'react-native';
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -155,7 +155,7 @@ const AccordionItem = ({title, code, description, sub}) => {
               <FontAwesome name="chevron-down" size={24} color="black" onPress={toggleButton}/>
             }
             {!sub.includes(code) &&
-              <FontAwesome name="shopping-cart" size={24} color="black" onPress={toggleButton}/>
+              <FontAwesome name="shopping-cart" size={24} color="black" onPress={()=>router.push("/checkout")}/>
             }
             {sub.includes("all") &&
               <FontAwesome name="chevron-down" size={24} color="black" onPress={toggleButton}/>
@@ -174,14 +174,8 @@ const AccordionItem = ({title, code, description, sub}) => {
                     return (
                         <View style={styles.articlesContainer} key={index}>
                           <Link href={`/article/${item.toLowerCase().replace("/", "")}`} >
-                            
                               <Text>{item}</Text>
-                            
                           </Link>
-                            
-                              
-                            
-                            
                         </View>
                         );
                     })

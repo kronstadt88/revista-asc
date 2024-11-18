@@ -212,6 +212,30 @@ export const putArticle = async (article, text, image, createdAt, pair) => {
   }
 };
 
+export const putCustomer = async (customer) => {
+  try {
+    const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
+    const restOperation = put({
+      apiName: "ascpi",
+      path: `/customers/${customer.id}`,
+      options: {
+        headers: {
+          Authorization: idToken,
+        },
+        body: {
+          customer
+        },
+      },
+    });
+    const { body } = await restOperation.response;
+    const json = await body.json();
+    return json;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+
 export const putUser = async (subscription) => {
   try {
     const session = await fetchAuthSession();
@@ -304,17 +328,15 @@ export const paymentIntentRequest = async (subscription) => {
 };
 
 
-export const paymentIntentRequestLibrary = async (subscription) => {
+export const paymentIntentLibraryRequest = async (subscription) => {
   try {
     const session = await fetchAuthSession();
-    const cognitoUserId = session.userSub;
     const idToken = session.tokens?.idToken?.toString();
-    const user = {name: session.tokens.idToken.payload["cognito:username"], email: session.tokens.idToken.payload["email"], userId: cognitoUserId }
-    const bodyy = { subscription, user };
+    const bodyy = { product,  userDetails: session.tokens?.idToken.payload };
 
     const restOperation = post({
       apiName: "ascpi",
-      path: "/paymentIntent",
+      path: "/paymentIntentLibrary",
 
       options: {
         headers: {
