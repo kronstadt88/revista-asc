@@ -56,6 +56,7 @@ function Checkout() {
 
   useFocusEffect(
     useCallback(() => {
+      setCheckoutDone(false);
       getUserSubscription()
     }, [])
   );
@@ -289,7 +290,7 @@ const s = StyleSheet.create({
     flex: 1,
     backgroundColor: "#e5dedd",
     alignContent: "center",
-    
+    height: "100%"
     
   },
   

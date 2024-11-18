@@ -23,6 +23,29 @@ export const getArticle = async (id, articlePair) => {
   }
 };
 
+export const getCustomer = async () => {
+  try {
+    const session = await fetchAuthSession();
+    const idToken = session.tokens?.idToken?.toString();
+
+    const restOperation = get({
+      apiName: "ascpi",
+
+      path: `/customers?${session.tokens.idToken.payload.email}`,
+      options: {
+        headers: {
+          Authorization: idToken,
+        },
+      },
+    });
+    const { body } = await restOperation.response;
+    const json = await body.json();
+    return json;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 export const getArticles = async (articlePair) => {
   try {
     const idToken = (await fetchAuthSession()).tokens?.idToken?.toString();
@@ -257,8 +280,31 @@ export const deleteUser = async (articlePair) => {
 };
 
 export const paymentIntentRequest = async (subscription) => {
-  
+  try {
+    const session = await fetchAuthSession();
+    const idToken = session.tokens?.idToken?.toString();
+    const bodyy = { subscription,  userDetails: session.tokens?.idToken.payload };
 
+    const restOperation = post({
+      apiName: "ascpi",
+      path: "/paymentIntent",
+
+      options: {
+        headers: {
+          Authorization: idToken,
+        },
+        body: bodyy,
+      },
+    });
+    const response = await restOperation.response;
+    return response;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+
+export const paymentIntentRequestLibrary = async (subscription) => {
   try {
     const session = await fetchAuthSession();
     const cognitoUserId = session.userSub;

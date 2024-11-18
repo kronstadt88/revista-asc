@@ -39,15 +39,23 @@ export const handler = async (event, context) => {
     return {price: prices[product]}
   })
   
-  let existingCustomers = await stripe.customers.list({email : requestJSON.user.email});
+  let existingCustomers = await stripe.customers.list({email : requestJSON.userDetails.email});
   if(existingCustomers.data.length){
       customer = existingCustomers.data[0];
   }else{
     customer = await stripe.customers.create({
-      name: requestJSON.user.name,
-      email: requestJSON.user.email,
-      metadata: {cognitoUserId: requestJSON.user.userId}
-  
+      name: requestJSON.userDetails.given_name + " " + requestJSON.userDetails.family_name,
+      address: {
+        line1: requestJSON.userDetails.address.formatted,
+        country: requestJSON.userDetails.zoneinfo
+      },
+      email: requestJSON.userDetails.email,
+      phone: requestJSON.userDetails.phone_number,
+      metadata: {
+        cognitoUserName: requestJSON.userDetails["cognito:username"],
+        cognitoId: requestJSON.userDetails.sub,
+        birthdate:  requestJSON.userDetails.birthdate,
+      }
     });
   }
   

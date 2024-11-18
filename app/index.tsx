@@ -3,18 +3,10 @@ import {
   View,
   ImageBackground
 } from "react-native";
-import {  router } from "expo-router";
-import { PaperProvider, Button} from "react-native-paper";
+import { router } from "expo-router";
+import { Button} from "react-native-paper";
 
-import { useAuthenticator, withAuthenticator } from "@aws-amplify/ui-react-native";
-
-import { Amplify } from "aws-amplify";
-import awsconfig from "../amplifyconfiguration.json";
-
-
-Amplify.configure(awsconfig);
-
-import { getSubscription } from "../services";
+import { withAuthenticator } from "@aws-amplify/ui-react-native";
 
 function IndexScreen() {
   

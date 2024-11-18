@@ -84,7 +84,7 @@ const AnimatedAcordion = () => {
   
   useFocusEffect(
     useCallback(() => {
-      getUserSubscription()
+      getUserSubscription();
     }, [])
   );
 

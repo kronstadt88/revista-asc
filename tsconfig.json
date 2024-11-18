@@ -10,5 +10,5 @@
     "**/*.js",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+, "amplify/backend/function/getSubscription/src/index.mjs", "amplify/backend/function/getUsers/src/index.mjs", "amplify/backend/function/paymentIntent/src/index.mjs", "amplify/backend/function/getCustomers/src/index.mjs"  ]
 }

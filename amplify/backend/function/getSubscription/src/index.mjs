@@ -56,6 +56,16 @@ export const handler = async (event, context)=>{
       limit: 3,
       email: event["queryStringParameters"]['email']
     });
+
+    if(customer.data.length === 0 ){
+      return {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "*",
+        },
+        body: JSON.stringify({ currentSubscriptions: [], groupedSubscriptions: []})
+      };
+    }
   
     const subscription = await stripe.subscriptions.list({
       limit: 10,
